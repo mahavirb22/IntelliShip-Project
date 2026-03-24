@@ -1,15 +1,20 @@
 import axios from "axios";
 import { clearAuthState, getAuthToken } from "./authStorage";
 
+// ✅ Correct env variable (Vercel uses this)
+const BASE_URL =
+  import.meta.env.VITE_API_URL || "https://intelliship-backend.onrender.com";
+
+// Create axios instance
 const API = axios.create({
-  baseURL:
-    import.meta.env.VITE_API_BASE_URL || "https://intelliship.onrender.com",
+  baseURL: BASE_URL,
   headers: {
     "Content-Type": "application/json",
   },
+  withCredentials: true, // useful if cookies used later
 });
 
-// Add token to requests if available
+// 🔐 Attach JWT token automatically
 API.interceptors.request.use((config) => {
   const token = getAuthToken();
   if (token) {
@@ -18,11 +23,14 @@ API.interceptors.request.use((config) => {
   return config;
 });
 
+// ⚠️ Handle auth errors globally
 API.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error?.response?.status === 401) {
       clearAuthState();
+
+      // Redirect only if protected route
       if (window.location.pathname.startsWith("/dashboard")) {
         window.location.href = "/login";
       }
@@ -31,34 +39,38 @@ API.interceptors.response.use(
   },
 );
 
-// Authentication APIs
+// ================= AUTH =================
 export const signup = (data) => API.post("/api/auth/signup", data);
 export const signin = (data) => API.post("/api/auth/signin", data);
 export const verifyToken = () => API.get("/api/auth/verify");
 export const logout = () => API.post("/api/auth/logout");
 
-// Shipment APIs
+// ================= SHIPMENTS =================
 export const createShipment = (data) => API.post("/api/shipments", data);
 export const getShipment = (id) => API.get(`/api/shipments/${id}`);
 export const getAllShipments = () => API.get("/api/shipments");
+
 export const updateShipmentStatus = (shipmentId, data) =>
   API.patch(`/api/shipments/${shipmentId}/status`, data);
+
 export const startMonitoring = (shipmentId) =>
   API.post(`/api/shipments/${shipmentId}/start-monitoring`);
+
 export const trackShipmentSecure = (data) =>
   API.post("/api/shipments/track", data);
 
-// Event APIs
+// ================= EVENTS =================
 export const getEvents = (shipmentId) => API.get(`/api/events/${shipmentId}`);
+
 export const createEvent = (data) => API.post("/api/events", data);
 
-// Analytics API
+// ================= ANALYTICS =================
 export const getAnalytics = () => API.get("/api/analytics");
 
-// Logs API
+// ================= LOGS =================
 export const addManualLog = (data) => API.post("/api/logs/manual", data);
 
-// Complaints API
+// ================= COMPLAINTS =================
 export const createComplaint = (data) => API.post("/api/complaints", data);
 
 export default API;
