@@ -237,7 +237,7 @@ Example: ISP1709384720ABCDE
 
 ## 🌐 Backend Deployment
 
-**Live Backend:** `https://intelliship.onrender.com`
+**Live Backend:** `https://intelliship-project.onrender.com`
 
 The backend hosted on Render will:
 

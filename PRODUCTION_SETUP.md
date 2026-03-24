@@ -75,7 +75,7 @@ PORT=5000
 node server.js
 ```
 
-The backend is hosted at: `https://intelliship.onrender.com`
+The backend is hosted at: `https://intelliship-project.onrender.com`
 
 ### Frontend Setup
 
@@ -216,7 +216,7 @@ Example: ISP170938472012345ABCDE
 
 ## 🔄 Backend Integration
 
-The backend is hosted on Render: `https://intelliship.onrender.com`
+The backend is hosted on Render: `https://intelliship-project.onrender.com`
 
 **Database Schema:**
 

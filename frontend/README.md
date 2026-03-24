@@ -49,7 +49,7 @@ The application will be available at `http://localhost:5173`
 The platform connects to the backend API at:
 
 ```
-https://intelliship.onrender.com
+https://intelliship-project.onrender.com
 ```
 
 ### Available Endpoints:

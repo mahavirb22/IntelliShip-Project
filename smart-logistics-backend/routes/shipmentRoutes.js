@@ -43,7 +43,9 @@ const canAccessShipment = (shipment, user) => {
 router.post("/", auth, authorize("seller", "admin"), async (req, res) => {
   try {
     const shipment_id = req.body.shipment_id || generateShipmentId();
-    const baseUrl = process.env.FRONTEND_BASE_URL || "http://localhost:5173";
+    const baseUrl =
+      process.env.FRONTEND_BASE_URL ||
+      "https://intelli-ship-project-frontend.vercel.app";
 
     const shipment = new Shipment({
       ...req.body,

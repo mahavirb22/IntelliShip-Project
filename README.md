@@ -86,7 +86,7 @@ npm run dev
 Use `.env` in frontend with:
 
 ```env
-VITE_API_BASE_URL=http://localhost:5000
+VITE_API_URL=https://intelliship-project.onrender.com
 ```
 
 ### 3. ML Service

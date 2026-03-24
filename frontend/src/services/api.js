@@ -2,8 +2,11 @@ import axios from "axios";
 import { clearAuthState, getAuthToken } from "./authStorage";
 
 // ✅ Correct env variable (Vercel uses this)
-const BASE_URL =
-  import.meta.env.VITE_API_URL || "https://intelliship-backend.onrender.com";
+const BASE_URL = (import.meta.env.VITE_API_URL || "").replace(/\/+$/, "");
+
+if (!BASE_URL) {
+  throw new Error("VITE_API_URL is required for API configuration");
+}
 
 // Create axios instance
 const API = axios.create({

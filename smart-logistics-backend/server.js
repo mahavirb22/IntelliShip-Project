@@ -12,10 +12,13 @@ const sanitizeInputs = require("./middleware/sanitizeInputs");
 const env = cleanEnv(process.env, {
   MONGO_URI: str(),
   JWT_SECRET: str(),
+  ML_SERVICE_URL: str({
+    default: "https://intelliship-ml-service.onrender.com",
+  }),
   PORT: port({ default: 5000 }),
   NODE_ENV: str({ default: "development" }),
   ALLOWED_ORIGINS: str({
-    default: "http://localhost:5173,http://localhost:3000",
+    default: "https://intelli-ship-project-frontend.vercel.app",
   }),
   RATE_LIMIT: num({ default: 120 }),
 });
@@ -26,8 +29,8 @@ const app = express();
 const corsOptions = {
   origin: function (origin, callback) {
     const allowedOrigins = env.ALLOWED_ORIGINS
-      ? env.ALLOWED_ORIGINS.split(",")
-      : ["http://localhost:5173", "http://localhost:3000"];
+      ? env.ALLOWED_ORIGINS.split(",").map((item) => item.trim())
+      : ["https://intelli-ship-project-frontend.vercel.app"];
 
     // Allow requests with no origin (mobile apps, Postman, ESP32)
     if (!origin || allowedOrigins.includes(origin)) {
@@ -134,7 +137,7 @@ if (process.env.NODE_ENV !== "test") {
   server = app.listen(PORT, () => {
     console.log(`🚀 IntelliShip Backend running on port ${PORT}`);
     console.log(`📊 Environment: ${env.NODE_ENV || "development"}`);
-    console.log(`🏥 Health check: http://localhost:${PORT}/health`);
+    console.log("🏥 Health check route: /health");
   });
 }
 

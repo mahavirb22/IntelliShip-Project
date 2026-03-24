@@ -105,14 +105,14 @@ In Render dashboard, add these variables:
 
 1. Click "Create Web Service"
 2. Wait for deployment (3-5 minutes)
-3. Note the deployed URL: `https://intelliship-backend.onrender.com`
+3. Note the deployed URL: `https://intelliship-project.onrender.com`
 
 ### Step 6: Verify Deployment
 
 **Test Health Check:**
 
 ```bash
-curl https://intelliship-backend.onrender.com/health
+curl https://intelliship-project.onrender.com/health
 ```
 
 Expected response:
@@ -130,7 +130,7 @@ Expected response:
 **Test Event Creation (ESP32):**
 
 ```bash
-curl -X POST https://intelliship-backend.onrender.com/api/events \
+curl -X POST https://intelliship-project.onrender.com/api/events \
   -H "Content-Type: application/json" \
   -d '{
     "shipment_id": "SHIP001",
@@ -254,7 +254,7 @@ Update ESP32 code with deployed backend URL:
 
 ```cpp
 // In arduino_code.ino
-const char* serverUrl = "https://intelliship-backend.onrender.com/api/events";
+const char* serverUrl = "https://intelliship-project.onrender.com/api/events";
 
 void sendVibrationEvent(String shipmentId, String eventType, int edges, float avgHigh) {
   HTTPClient http;
@@ -289,14 +289,13 @@ Update frontend API base URL:
 ```javascript
 // src/services/api.js
 const API_BASE_URL =
-  import.meta.env.VITE_API_URL ||
-  "https://intelliship-backend.onrender.com/api";
+  import.meta.env.VITE_API_URL || "https://intelliship-project.onrender.com";
 ```
 
 Add to frontend `.env`:
 
 ```env
-VITE_API_URL=https://intelliship-backend.onrender.com/api
+VITE_API_URL=https://intelliship-project.onrender.com
 ```
 
 ---

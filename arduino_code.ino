@@ -16,7 +16,7 @@ const char* ssid = "Mahavir22";
 const char* password = "mahavir2006";
 
 // ================== CLOUD CONFIG ==================
-const char* serverURL = "https://intelliship.onrender.com/api/events";
+const char* serverURL = "https://intelliship-project.onrender.com/api/events";
 String shipmentID = "SHIP001";   // Change dynamically later if needed
 
 // ================== FEATURE VARIABLES ==================

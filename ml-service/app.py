@@ -82,5 +82,4 @@ def predict(payload: PredictPayload):
     return {
         "risk_score": round(risk_score, 4),
         "risk_label": risk_label,
-        "source": "heuristic"
     }
