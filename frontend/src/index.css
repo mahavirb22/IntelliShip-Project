@@ -1,0 +1,172 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800;900&display=swap");
+
+@layer base {
+  body {
+    @apply bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900 text-white;
+    font-family: "Inter", "Poppins", sans-serif;
+    min-height: 100vh;
+    background-attachment: fixed;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-6 shadow-xl;
+    transition: all 0.3s ease;
+  }
+
+  .glass-card:hover {
+    @apply shadow-2xl border-white/30;
+    transform: translateY(-2px);
+  }
+
+  .btn-primary {
+    @apply bg-gradient-to-r from-primary to-blue-600 hover:from-blue-600 hover:to-primary 
+           text-white font-semibold py-3 px-6 rounded-lg 
+           transition-all duration-300 transform hover:scale-105 hover:shadow-lg
+           hover:shadow-primary/50;
+  }
+
+  .btn-secondary {
+    @apply bg-white/10 hover:bg-white/20 text-white font-semibold py-3 px-6 rounded-lg 
+           border border-white/30 hover:border-white/50 transition-all duration-300 
+           transform hover:scale-105 backdrop-blur-sm;
+  }
+
+  .status-badge {
+    @apply px-4 py-2 rounded-full font-semibold text-sm inline-flex items-center gap-2;
+  }
+
+  .input-field {
+    @apply w-full bg-white/10 border border-white/30 rounded-lg px-4 py-3 text-white 
+           placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary 
+           focus:border-transparent transition-all backdrop-blur-sm
+           hover:bg-white/15 focus:bg-white/15;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    180deg,
+    rgba(66, 135, 245, 0.6),
+    rgba(139, 92, 246, 0.6)
+  );
+  border-radius: 5px;
+  transition: all 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(
+    180deg,
+    rgba(66, 135, 245, 0.9),
+    rgba(139, 92, 246, 0.9)
+  );
+}
+
+/* Pulse Animation */
+@keyframes pulse-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(239, 68, 68, 0.8);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Gradient Text Animation */
+@keyframes gradient-shift {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.animate-gradient {
+  background-size: 200% auto;
+  animation: gradient-shift 3s ease infinite;
+}
+
+/* Floating Animation */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Shimmer Effect */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.shimmer {
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.3) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* Glow Effect */
+.glow {
+  box-shadow:
+    0 0 20px rgba(66, 135, 245, 0.5),
+    0 0 40px rgba(66, 135, 245, 0.3),
+    0 0 60px rgba(66, 135, 245, 0.1);
+}
+
+.glow-purple {
+  box-shadow:
+    0 0 20px rgba(139, 92, 246, 0.5),
+    0 0 40px rgba(139, 92, 246, 0.3),
+    0 0 60px rgba(139, 92, 246, 0.1);
+}
+
+/* Selection */
+::selection {
+  background-color: rgba(66, 135, 245, 0.3);
+  color: white;
+}
+
+::-moz-selection {
+  background-color: rgba(66, 135, 245, 0.3);
+  color: white;
+}

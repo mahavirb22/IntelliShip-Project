@@ -1,0 +1,367 @@
+const express = require("express");
+const router = express.Router();
+const Shipment = require("../models/Shipment");
+const Event = require("../models/Event");
+const auth = require("../middleware/auth");
+const authorize = require("../middleware/authorize");
+const {
+  SHIPMENT_LIFECYCLE,
+  isValidTransition,
+} = require("../utils/statusEnums");
+
+const generateShipmentId = () => {
+  const timestamp = Date.now().toString().slice(-8);
+  const randomPart = Math.random().toString(36).slice(2, 7).toUpperCase();
+  return `SHIP${timestamp}${randomPart}`;
+};
+
+const toTrackingPath = (baseUrl, shipmentId) =>
+  `${baseUrl.replace(/\/$/, "")}/track/${shipmentId}`;
+
+const appendStatusHistory = (shipment, status, location) => {
+  const currentStatus = shipment.status;
+  if (currentStatus === status) {
+    return;
+  }
+
+  shipment.status = status;
+  shipment.statusHistory.push({
+    status,
+    timestamp: new Date(),
+    ...(location ? { location } : {}),
+  });
+};
+
+const canAccessShipment = (shipment, user) => {
+  if (!shipment || !user) return false;
+  return (
+    user.role === "admin" || String(shipment.seller_id) === String(user._id)
+  );
+};
+
+// Create Shipment (Protected - Seller/Admin)
+router.post("/", auth, authorize("seller", "admin"), async (req, res) => {
+  try {
+    const shipment_id = req.body.shipment_id || generateShipmentId();
+    const baseUrl = process.env.FRONTEND_BASE_URL || "http://localhost:5173";
+
+    const shipment = new Shipment({
+      ...req.body,
+      shipment_id,
+      status: "CREATED",
+      condition: "SAFE",
+      monitoring_started: false,
+      tracking_link: toTrackingPath(baseUrl, shipment_id),
+      statusHistory: [
+        {
+          status: "CREATED",
+          timestamp: new Date(),
+          location: req.body.origin_location,
+        },
+      ],
+      logs: [
+        {
+          message: "Shipment Created",
+          type: "SYSTEM",
+          timestamp: new Date(),
+        },
+      ],
+      seller_id: req.user._id,
+      seller_name: req.user.name,
+      seller_email: req.user.email,
+    });
+
+    await shipment.save();
+
+    res.status(201).json({
+      success: true,
+      shipment,
+    });
+  } catch (err) {
+    res.status(400).json({
+      success: false,
+      error: err.message,
+    });
+  }
+});
+
+// Update shipment lifecycle status (Protected - Seller/Admin)
+router.patch(
+  "/:id/status",
+  auth,
+  authorize("seller", "admin"),
+  async (req, res) => {
+    try {
+      const { status, location } = req.body;
+
+      if (!status || !SHIPMENT_LIFECYCLE.includes(status)) {
+        return res.status(400).json({
+          success: false,
+          message: "Valid status is required",
+        });
+      }
+
+      const shipment = await Shipment.findOne({ shipment_id: req.params.id });
+      if (!shipment) {
+        return res.status(404).json({
+          success: false,
+          message: "Shipment not found",
+        });
+      }
+
+      if (!canAccessShipment(shipment, req.user)) {
+        return res.status(403).json({
+          success: false,
+          message: "Access denied",
+        });
+      }
+
+      if (!isValidTransition(shipment.status, status)) {
+        return res.status(400).json({
+          success: false,
+          message: `Invalid status transition from ${shipment.status} to ${status}`,
+        });
+      }
+
+      appendStatusHistory(shipment, status, location);
+
+      if (status === "DAMAGED") {
+        shipment.condition = "DAMAGED";
+      }
+
+      shipment.logs.push({
+        message: `Lifecycle updated to ${status}`,
+        type: "MANUAL",
+        timestamp: new Date(),
+      });
+
+      await shipment.save();
+
+      res.json({
+        success: true,
+        data: shipment,
+      });
+    } catch (err) {
+      res.status(500).json({
+        success: false,
+        error: err.message,
+      });
+    }
+  },
+);
+
+// Start Monitoring (Protected - Seller/Admin)
+router.post(
+  "/:id/start-monitoring",
+  auth,
+  authorize("seller", "admin"),
+  async (req, res) => {
+    try {
+      const shipment = await Shipment.findOne({ shipment_id: req.params.id });
+
+      if (!shipment) {
+        return res.status(404).json({
+          success: false,
+          message: "Shipment not found",
+        });
+      }
+
+      if (!canAccessShipment(shipment, req.user)) {
+        return res.status(403).json({
+          success: false,
+          message: "Access denied",
+        });
+      }
+
+      if (!shipment.monitoring_started) {
+        shipment.monitoring_started = true;
+        shipment.logs.push({
+          message: "Monitoring Started",
+          type: "SYSTEM",
+          timestamp: new Date(),
+        });
+      }
+
+      if (shipment.status === "CREATED") {
+        appendStatusHistory(shipment, "PACKED", req.body.location);
+      }
+
+      if (shipment.status === "PACKED") {
+        appendStatusHistory(shipment, "IN_TRANSIT", req.body.location);
+      }
+
+      await shipment.save();
+
+      res.json({
+        success: true,
+        message: "Monitoring activated",
+        data: shipment,
+      });
+    } catch (err) {
+      res.status(500).json({
+        success: false,
+        error: err.message,
+      });
+    }
+  },
+);
+
+// Manual log updates by delivery partners/seller (Protected)
+router.post(
+  "/logs/manual",
+  auth,
+  authorize("seller", "admin"),
+  async (req, res) => {
+    try {
+      const { shipment_id, message } = req.body;
+
+      if (!shipment_id || !message) {
+        return res.status(400).json({
+          success: false,
+          error: "shipment_id and message are required",
+        });
+      }
+
+      const shipment = await Shipment.findOne({ shipment_id });
+      if (!shipment) {
+        return res.status(404).json({
+          success: false,
+          error: "Shipment not found",
+        });
+      }
+
+      if (!canAccessShipment(shipment, req.user)) {
+        return res.status(403).json({
+          success: false,
+          message: "Access denied",
+        });
+      }
+
+      shipment.logs.push({
+        message: message.trim(),
+        type: "MANUAL",
+        timestamp: new Date(),
+      });
+
+      await shipment.save();
+
+      res.status(201).json({
+        success: true,
+        message: "Manual log added",
+        data: shipment,
+      });
+    } catch (err) {
+      res.status(500).json({
+        success: false,
+        error: err.message,
+      });
+    }
+  },
+);
+
+// Get all shipments for logged-in seller/admin (Protected)
+router.get("/", auth, authorize("seller", "admin"), async (req, res) => {
+  try {
+    const query = req.user.role === "admin" ? {} : { seller_id: req.user._id };
+
+    const shipments = await Shipment.find(query).sort({
+      created_at: -1,
+    });
+
+    res.json({
+      success: true,
+      shipments,
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      error: err.message,
+    });
+  }
+});
+
+// Public secure tracking with shipment id + mobile validation
+router.post("/track", async (req, res) => {
+  try {
+    const { shipment_id, mobile } = req.body;
+
+    if (!shipment_id || !mobile) {
+      return res.status(400).json({
+        success: false,
+        message: "shipment_id and mobile are required",
+      });
+    }
+
+    const shipment = await Shipment.findOne({
+      shipment_id: shipment_id.trim(),
+    });
+
+    if (!shipment) {
+      return res.status(404).json({
+        success: false,
+        message: "Shipment not found",
+      });
+    }
+
+    const normalizedMobile = String(mobile).replace(/\D/g, "");
+    const shipmentMobile = String(shipment.customer_phone || "").replace(
+      /\D/g,
+      "",
+    );
+
+    if (!shipmentMobile || normalizedMobile !== shipmentMobile) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid shipment credentials",
+      });
+    }
+
+    const events = await Event.find({ shipment_id: shipment.shipment_id })
+      .sort({ timestamp: -1 })
+      .limit(100)
+      .lean();
+
+    res.json({
+      success: true,
+      data: shipment,
+      events,
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      error: err.message,
+    });
+  }
+});
+
+// Get Shipment by ID (Public fallback for QR links)
+router.get("/:id", async (req, res) => {
+  try {
+    const shipment = await Shipment.findOne({ shipment_id: req.params.id });
+
+    if (!shipment) {
+      return res.status(404).json({
+        success: false,
+        message: "Shipment not found",
+      });
+    }
+
+    const events = await Event.find({ shipment_id: shipment.shipment_id })
+      .sort({ timestamp: -1 })
+      .limit(100)
+      .lean();
+
+    res.json({
+      success: true,
+      data: shipment,
+      events,
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      error: err.message,
+    });
+  }
+});
+
+module.exports = router;
