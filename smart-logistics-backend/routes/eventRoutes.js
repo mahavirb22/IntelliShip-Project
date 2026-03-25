@@ -8,6 +8,19 @@ const { EVENT_SEVERITY } = require("../utils/statusEnums");
 const HIGH_EVENT_DAMAGE_THRESHOLD = Number(
   process.env.HIGH_EVENT_DAMAGE_THRESHOLD || 3,
 );
+const LOW_REPEAT_WINDOW_SECONDS = Number(
+  process.env.LOW_REPEAT_WINDOW_SECONDS || 20,
+);
+const LOW_MIN_MEANINGFUL_INTENSITY = Number(
+  process.env.LOW_MIN_MEANINGFUL_INTENSITY || 15,
+);
+const MEDIUM_MIN_INTENSITY = Number(process.env.MEDIUM_MIN_INTENSITY || 45);
+const MEDIUM_MIN_PULSE_COUNT = Number(process.env.MEDIUM_MIN_PULSE_COUNT || 3);
+const EVENT_DEDUP_WINDOW_SECONDS = Number(
+  process.env.NODE_ENV === "test"
+    ? process.env.EVENT_DEDUP_WINDOW_SECONDS || 0
+    : process.env.EVENT_DEDUP_WINDOW_SECONDS || 15,
+);
 
 const toSeverityFromLegacyType = (eventType = "") => {
   const normalized = String(eventType).toUpperCase();
@@ -23,6 +36,88 @@ const getSeverityByIntensity = (intensity) => {
   return "LOW";
 };
 
+const severityPriority = {
+  LOW: 1,
+  MEDIUM: 2,
+  HIGH: 3,
+};
+
+const getHigherSeverity = (a, b) => {
+  const first = EVENT_SEVERITY.includes(String(a || "").toUpperCase())
+    ? String(a).toUpperCase()
+    : "LOW";
+  const second = EVENT_SEVERITY.includes(String(b || "").toUpperCase())
+    ? String(b).toUpperCase()
+    : "LOW";
+
+  return severityPriority[first] >= severityPriority[second] ? first : second;
+};
+
+const isWithinWindow = (timestamp, windowSeconds) => {
+  if (!timestamp || !Number.isFinite(windowSeconds) || windowSeconds <= 0) {
+    return false;
+  }
+
+  const previousAt = new Date(timestamp).getTime();
+  if (Number.isNaN(previousAt)) {
+    return false;
+  }
+
+  return Date.now() - previousAt <= windowSeconds * 1000;
+};
+
+const shouldFilterByNoise = ({
+  severity,
+  intensity,
+  avgIntensity,
+  eventCount,
+  lastEvent,
+}) => {
+  // Always keep high-severity batches to avoid missing critical incidents.
+  if (severity === "HIGH") {
+    return false;
+  }
+
+  if (
+    severity === "LOW" &&
+    intensity < LOW_MIN_MEANINGFUL_INTENSITY &&
+    avgIntensity < LOW_MIN_MEANINGFUL_INTENSITY
+  ) {
+    return true;
+  }
+
+  if (
+    severity === "LOW" &&
+    lastEvent?.severity === "LOW" &&
+    isWithinWindow(lastEvent.timestamp, LOW_REPEAT_WINDOW_SECONDS)
+  ) {
+    return true;
+  }
+
+  // Keep medium only when batch signal is strong enough.
+  if (severity === "MEDIUM") {
+    const meaningfulMedium =
+      intensity >= MEDIUM_MIN_INTENSITY ||
+      avgIntensity >= LOW_MIN_MEANINGFUL_INTENSITY ||
+      eventCount >= MEDIUM_MIN_PULSE_COUNT;
+
+    return !meaningfulMedium;
+  }
+
+  return false;
+};
+
+const isDuplicateEvent = ({ severity, lastEvent }) => {
+  if (!lastEvent) {
+    return false;
+  }
+
+  return (
+    lastEvent.severity === severity &&
+    isWithinWindow(lastEvent.timestamp, EVENT_DEDUP_WINDOW_SECONDS)
+  );
+};
+
 const eventMessageMap = {
   LOW: "Low vibration detected",
   MEDIUM: "Medium vibration detected",
@@ -35,7 +130,7 @@ const toCondition = (severity, riskScore) => {
   }
 
   if (severity === "MEDIUM" || riskScore >= 0.45) {
-    return "RISK";
+    return "AT_RISK";
   }
 
   return "SAFE";
@@ -74,6 +169,8 @@ router.post("/", async (req, res) => {
     const numericIntensity = Number(
       intensity ?? Math.max(Number(avgHigh || 0), Number(risingEdges || 0) * 4),
     );
+    const numericAvgIntensity = Number(avgHigh || 0);
+    const numericPulseCount = Number(pulseCount || 0);
 
     if (!Number.isFinite(numericIntensity) || numericIntensity < 0) {
       return res.status(400).json({
@@ -82,21 +179,70 @@ router.post("/", async (req, res) => {
       });
     }
 
-    const normalizedSeverity = EVENT_SEVERITY.includes(
+    if (!Number.isFinite(numericAvgIntensity) || numericAvgIntensity < 0) {
+      return res.status(400).json({
+        success: false,
+        error: "avgHigh must be a non-negative number",
+      });
+    }
+
+    if (!Number.isFinite(numericPulseCount) || numericPulseCount < 0) {
+      return res.status(400).json({
+        success: false,
+        error: "pulseCount must be a non-negative number",
+      });
+    }
+
+    const inferredSeverity = getSeverityByIntensity(numericIntensity);
+    const explicitSeverity = EVENT_SEVERITY.includes(
       String(severity || "").toUpperCase(),
     )
       ? String(severity).toUpperCase()
       : event_type
         ? toSeverityFromLegacyType(event_type)
-        : getSeverityByIntensity(numericIntensity);
+        : "LOW";
+
+    // Preserve high-priority labels and prevent downgrading severity.
+    const normalizedSeverity = getHigherSeverity(
+      explicitSeverity,
+      inferredSeverity,
+    );
+
+    const lastEvent = await Event.findOne({ shipment_id })
+      .sort({ timestamp: -1 })
+      .lean();
+
+    if (
+      shouldFilterByNoise({
+        severity: normalizedSeverity,
+        intensity: numericIntensity,
+        avgIntensity: numericAvgIntensity,
+        eventCount: numericPulseCount,
+        lastEvent,
+      })
+    ) {
+      return res.status(200).json({
+        success: true,
+        stored: false,
+        reason: "filtered",
+      });
+    }
+
+    if (isDuplicateEvent({ severity: normalizedSeverity, lastEvent })) {
+      return res.status(200).json({
+        success: true,
+        stored: false,
+        reason: "duplicate",
+      });
+    }
 
     const mlPrediction = await getRiskPrediction({
       intensity: numericIntensity,
-      pulseCount: Number(pulseCount || 0),
+      pulseCount: numericPulseCount,
       maxHigh: Number(maxHigh || 0),
       totalHigh: Number(totalHigh || 0),
       risingEdges: Number(risingEdges || 0),
-      avgHigh: Number(avgHigh || 0),
+      avgHigh: numericAvgIntensity,
       severity: normalizedSeverity,
     });
 
@@ -112,8 +258,10 @@ router.post("/", async (req, res) => {
       severity: normalizedSeverity,
       intensity: numericIntensity,
       risingEdges: Number(risingEdges || 0),
-      avgHigh: Number(avgHigh || 0),
-      pulseCount: Number(pulseCount || 0),
+      avgHigh: numericAvgIntensity,
+      pulseCount: numericPulseCount,
+      avgIntensity: numericAvgIntensity,
+      eventCount: numericPulseCount,
       maxHigh: Number(maxHigh || 0),
       totalHigh: Number(totalHigh || 0),
       riskScore: normalizedRiskScore,
@@ -147,7 +295,7 @@ router.post("/", async (req, res) => {
     }
 
     shipment.logs.push({
-      message: eventMessageMap[normalizedSeverity],
+      message: `${eventMessageMap[normalizedSeverity]} (Batch of ${numericPulseCount} readings)`,
       type: "EVENT",
       timestamp: new Date(),
     });
@@ -156,6 +304,8 @@ router.post("/", async (req, res) => {
 
     res.status(201).json({
       success: true,
+      stored: true,
+      reason: "stored",
       message: "Event stored successfully",
       event_id: event._id,
       shipment_status: shipment.status,

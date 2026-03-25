@@ -17,9 +17,11 @@ const char* password = "mahavir2006";
 
 // ================== CLOUD CONFIG ==================
 const char* serverURL = "https://intelliship-project.onrender.com/api/events";
-String shipmentID = "SHIP001";
 
-// ================== FEATURE VARIABLES ==================
+// 🔴 IMPORTANT: PUT REAL SHIPMENT ID FROM YOUR UI
+String shipmentID = "SHIP253722256RTOU";
+
+// ================== VARIABLES ==================
 int pulseCount = 0;
 int maxHighDuration = 0;
 int totalHighTime = 0;
@@ -42,7 +44,7 @@ void setup() {
   connectWiFi();
 }
 
-// ================== WIFI CONNECT ==================
+// ================== WIFI ==================
 void connectWiFi() {
   WiFi.begin(ssid, password);
   Serial.print("Connecting to WiFi");
@@ -63,7 +65,7 @@ void connectWiFi() {
   Serial.println("\nWiFi Connected!");
 }
 
-// ================== MAIN LOOP ==================
+// ================== LOOP ==================
 void loop() {
 
   if (WiFi.status() != WL_CONNECTED) {
@@ -95,12 +97,11 @@ void loop() {
   float intensity = (avgHigh * 0.55f) + (risingEdges * 2.0f);
   String severity = classifySeverity(intensity);
 
-  // ===== DEBUG =====
   Serial.println("\n===== EVENT =====");
   Serial.println("Intensity: " + String(intensity));
   Serial.println("Severity: " + severity);
 
-  // ===== LED LOGIC =====
+  // LED
   if (severity == "HIGH") {
     digitalWrite(RED_LED, HIGH);
     digitalWrite(GREEN_LED, LOW);
@@ -109,7 +110,6 @@ void loop() {
     digitalWrite(GREEN_LED, HIGH);
   }
 
-  // ===== SEND DATA =====
   sendEventToCloud(
     shipmentID,
     severity,
@@ -134,7 +134,7 @@ void resetFeatures() {
   lastSignal = 0;
 }
 
-// ================== FEATURE EXTRACTION ==================
+// ================== FEATURE ==================
 void extractSample(int signal) {
 
   if (signal == 1 && lastSignal == 0)
@@ -162,7 +162,7 @@ String classifySeverity(float intensity) {
   return "LOW";
 }
 
-// ================== CLOUD FUNCTION ==================
+// ================== CLOUD ==================
 void sendEventToCloud(
   String shipment_id,
   String severity,
@@ -190,7 +190,6 @@ void sendEventToCloud(
 
     String jsonData = "{";
     jsonData += "\"shipment_id\":\"" + shipment_id + "\",";
-    jsonData += "\"event_type\":\"VIBRATION\",";
     jsonData += "\"severity\":\"" + severity + "\",";
     jsonData += "\"intensity\":" + String(intensity) + ",";
     jsonData += "\"pulseCount\":" + String(pulseCount) + ",";
@@ -200,15 +199,22 @@ void sendEventToCloud(
     jsonData += "\"avgHigh\":" + String(avgHigh);
     jsonData += "}";
 
+    Serial.println("\n📤 Sending JSON:");
+    Serial.println(jsonData);
+
     int httpCode = https.POST(jsonData);
 
     Serial.print("HTTP Response: ");
     Serial.println(httpCode);
 
-    if (httpCode <= 0) {
-      Serial.println("❌ Failed to send data");
+    String response = https.getString();
+    Serial.println("Response Body:");
+    Serial.println(response);
+
+    if (httpCode == 200 || httpCode == 201) {
+      Serial.println("✅ Event saved successfully");
     } else {
-      Serial.println("✅ Event sent successfully");
+      Serial.println("❌ Backend rejected request");
     }
 
     https.end();

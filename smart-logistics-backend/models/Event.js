@@ -40,6 +40,16 @@ const eventSchema = new mongoose.Schema({
     default: 0,
     min: [0, "Pulse count cannot be negative"],
   },
+  eventCount: {
+    type: Number,
+    default: 0,
+    min: [0, "Event count cannot be negative"],
+  },
+  avgIntensity: {
+    type: Number,
+    default: 0,
+    min: [0, "Average intensity cannot be negative"],
+  },
   maxHigh: {
     type: Number,
     default: 0,
