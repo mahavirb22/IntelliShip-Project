@@ -11,6 +11,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import Sidebar from "../components/Sidebar";
+import Navbar from "../components/Navbar";
 import { createShipment } from "../services/api";
 import QRCode from "react-qr-code";
 
@@ -107,11 +108,13 @@ IntelliShip Team`;
   };
 
   return (
-    <div className="flex flex-col lg:flex-row min-h-screen bg-surface">
-      <Sidebar />
+    <div className="min-h-screen bg-surface flex flex-col">
+      <Navbar />
+      <div className="flex flex-1 w-full max-w-[1400px] mx-auto">
+        <Sidebar />
 
-      <main className="flex-1 w-full min-w-0 p-4 lg:p-8 overflow-y-auto">
-        <div className="max-w-4xl mx-auto mt-12 lg:mt-0">
+        <main className="flex-1 min-w-0 p-4 lg:p-8 overflow-y-auto">
+          <div className="max-w-4xl mx-auto mt-12 lg:mt-0">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -405,6 +408,7 @@ IntelliShip Team`;
         </AnimatePresence>
         </div>
       </main>
+      </div>
     </div>
   );
 };

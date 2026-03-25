@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Search, Filter } from "lucide-react";
 import Sidebar from "../components/Sidebar";
+import Navbar from "../components/Navbar";
 import ShipmentCard from "../components/ShipmentCard";
 import { getAllShipments } from "../services/api";
 
@@ -53,11 +54,13 @@ const Shipments = () => {
   }, [searchTerm, statusFilter, shipments]);
 
   return (
-    <div className="flex flex-col lg:flex-row min-h-screen bg-surface">
-      <Sidebar />
+    <div className="min-h-screen bg-surface flex flex-col">
+      <Navbar />
+      <div className="flex flex-1 w-full max-w-[1400px] mx-auto">
+        <Sidebar />
 
-      <main className="flex-1 w-full min-w-0 p-4 lg:p-8 overflow-y-auto">
-        <div className="max-w-7xl mx-auto mt-12 lg:mt-0">
+        <main className="flex-1 min-w-0 p-4 lg:p-8 overflow-y-auto">
+          <div className="max-w-7xl mx-auto mt-12 lg:mt-0">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -135,6 +138,7 @@ const Shipments = () => {
         )}
         </div>
       </main>
+      </div>
     </div>
   );
 };

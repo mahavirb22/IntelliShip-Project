@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, RefreshCw, Share2, Package } from "lucide-react";
 import Sidebar from "../components/Sidebar";
+import Navbar from "../components/Navbar";
 import StatusBadge from "../components/StatusBadge";
 import Timeline from "../components/Timeline";
 import ToastContainer from "../components/ToastNotification";
@@ -127,12 +128,15 @@ const ShipmentDetails = () => {
 
   if (loading) {
     return (
-      <div className="flex flex-col lg:flex-row min-h-screen bg-surface">
-        <Sidebar />
-        <div className="flex-1 flex w-full min-w-0 items-center justify-center p-4">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary mx-auto mb-4" />
-            <p className="text-on-surface-variant">Loading shipment details...</p>
+      <div className="min-h-screen bg-surface flex flex-col">
+        <Navbar />
+        <div className="flex flex-1 w-full max-w-[1400px] mx-auto">
+          <Sidebar />
+          <div className="flex-1 flex w-full min-w-0 items-center justify-center p-4">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary mx-auto mb-4" />
+              <p className="text-on-surface-variant">Loading shipment details...</p>
+            </div>
           </div>
         </div>
       </div>
@@ -140,11 +144,13 @@ const ShipmentDetails = () => {
   }
 
   return (
-    <div className="flex flex-col lg:flex-row min-h-screen bg-surface">
-      <Sidebar />
+    <div className="min-h-screen bg-surface flex flex-col">
+      <Navbar />
+      <div className="flex flex-1 w-full max-w-[1400px] mx-auto">
+        <Sidebar />
 
-      <main className="flex-1 w-full min-w-0 p-4 lg:p-8 overflow-y-auto">
-        <div className="max-w-4xl mx-auto mt-12 lg:mt-0">
+        <main className="flex-1 min-w-0 p-4 lg:p-8 overflow-y-auto">
+          <div className="max-w-4xl mx-auto mt-12 lg:mt-0">
         <ToastContainer toasts={toasts} removeToast={removeToast} />
 
         {/* Header */}
@@ -344,6 +350,7 @@ const ShipmentDetails = () => {
         </motion.div>
         </div>
       </main>
+      </div>
     </div>
   );
 };
