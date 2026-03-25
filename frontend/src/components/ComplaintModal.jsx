@@ -36,23 +36,23 @@ const ComplaintModal = ({ isOpen, onClose, shipmentId, onSubmit }) => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+        className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center p-4"
         onClick={onClose}
       >
         <motion.div
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.9, opacity: 0 }}
-          className="glass-card max-w-lg w-full"
+          className="glass-card max-w-lg w-full bg-white shadow-2xl"
           onClick={(e) => e.stopPropagation()}
         >
           {!submitted ? (
             <>
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold">Submit Complaint</h2>
+                <h2 className="text-2xl font-bold text-on-surface">Submit Complaint</h2>
                 <button
                   onClick={onClose}
-                  className="hover:bg-white/10 p-2 rounded-lg transition-colors"
+                  className="hover:bg-gray-100 text-gray-500 hover:text-gray-900 p-2 rounded-lg transition-colors"
                 >
                   <X size={24} />
                 </button>
@@ -130,10 +130,10 @@ const ComplaintModal = ({ isOpen, onClose, shipmentId, onSubmit }) => {
                   />
                 </svg>
               </motion.div>
-              <h3 className="text-2xl font-bold text-safe mb-2">
+              <h3 className="text-2xl font-bold text-emerald-600 mb-2">
                 Complaint Submitted!
               </h3>
-              <p className="text-on-surface-variant/80">
+              <p className="text-on-surface-variant">
                 We'll review your complaint shortly.
               </p>
             </motion.div>

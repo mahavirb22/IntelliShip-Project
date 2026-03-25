@@ -14,15 +14,15 @@ const ToastNotification = ({ message, type = "success", onClose }) => {
   const config = {
     success: {
       icon: CheckCircle,
-      color: "bg-safe/20 border-safe text-safe",
+      color: "bg-white border-safe/30 text-emerald-700 shadow-xl shadow-safe/10",
     },
     error: {
       icon: AlertCircle,
-      color: "bg-severe/20 border-severe text-severe",
+      color: "bg-white border-severe/30 text-red-700 shadow-xl shadow-severe/10",
     },
     warning: {
       icon: AlertCircle,
-      color: "bg-minor/20 border-minor text-minor",
+      color: "bg-white border-minor/30 text-amber-700 shadow-xl shadow-minor/10",
     },
   };
 
@@ -33,11 +33,11 @@ const ToastNotification = ({ message, type = "success", onClose }) => {
       initial={{ opacity: 0, y: -50, x: 0 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -50 }}
-      className={`fixed top-4 right-4 z-50 glass-card ${color} border-2 flex items-center gap-3 min-w-[300px] max-w-md`}
+      className={`fixed top-4 right-4 z-50 rounded-xl ${color} border flex items-center gap-3 min-w-[300px] max-w-md px-4 py-3`}
     >
-      <Icon size={24} />
+      <Icon size={24} className={type === "success" ? "text-safe" : type === "error" ? "text-severe" : "text-minor"} />
       <p className="flex-1 font-medium">{message}</p>
-      <button onClick={onClose} className="hover:opacity-70 transition-opacity">
+      <button onClick={onClose} className="hover:opacity-70 text-gray-400 hover:text-gray-900 transition-opacity">
         <X size={20} />
       </button>
     </motion.div>

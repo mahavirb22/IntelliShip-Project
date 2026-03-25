@@ -166,10 +166,10 @@ IntelliShip Team`;
                     className="input-field appearance-none"
                     required
                   >
-                    <option value="Low" className="bg-surface-container">Low - Durable items</option>
-                    <option value="Medium" className="bg-surface-container">Medium - Standard care</option>
-                    <option value="High" className="bg-surface-container">High - Fragile items</option>
-                    <option value="Very High" className="bg-surface-container">
+                    <option value="Low" className="bg-white text-gray-900">Low - Durable items</option>
+                    <option value="Medium" className="bg-white text-gray-900">Medium - Standard care</option>
+                    <option value="High" className="bg-white text-gray-900">High - Fragile items</option>
+                    <option value="Very High" className="bg-white text-gray-900">
                       Very High - Extremely delicate
                     </option>
                   </select>
@@ -277,7 +277,7 @@ IntelliShip Team`;
               </div>
 
               {/* Shipment ID */}
-              <div className="bg-surface-container-low rounded-xl p-6 mb-6 border border-outline-variant/20">
+              <div className="bg-gray-50 rounded-xl p-6 mb-6 border border-gray-100">
                 <p className="text-on-surface-variant text-sm mb-2">Shipment ID:</p>
                 <div className="flex items-center justify-between gap-4">
                   <p className="text-2xl font-mono text-primary font-bold">
@@ -294,7 +294,7 @@ IntelliShip Team`;
               </div>
 
               {/* Tracking Link */}
-              <div className="bg-surface-container-low rounded-xl p-6 mb-6 border border-outline-variant/20">
+              <div className="bg-gray-50 rounded-xl p-6 mb-6 border border-gray-100">
                 <p className="text-on-surface-variant text-sm mb-2">Tracking Link:</p>
                 <div className="flex items-center gap-4 mb-4">
                   <input
@@ -341,7 +341,7 @@ IntelliShip Team`;
               </div>
 
               {/* QR Code */}
-              <div className="bg-surface-container-low rounded-xl p-6 mb-6 border border-outline-variant/20 text-center">
+              <div className="bg-gray-50 rounded-xl p-6 mb-6 border border-gray-100 text-center">
                 <p className="text-on-surface-variant text-sm mb-4">
                   QR Code for Easy Tracking (Print on shipping label)
                 </p>

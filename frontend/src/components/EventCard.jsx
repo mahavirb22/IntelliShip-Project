@@ -32,7 +32,7 @@ const EventCard = ({ event, index }) => {
               : event.event_type === "Minor"
                 ? "bg-minor"
                 : "bg-safe"
-          } border-4 border-gray-900`}
+          } border-4 border-white shadow-sm`}
         />
       </div>
 
@@ -47,18 +47,18 @@ const EventCard = ({ event, index }) => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-        <div className="flex items-center gap-3 bg-surface-container-low border border-outline-variant/10 p-3 rounded-lg">
-          <Activity size={20} className="text-primary" />
+        <div className="flex items-center gap-3 bg-gray-50 border border-gray-100 p-3 rounded-xl">
+          <Activity size={20} className="text-secondary-dim" />
           <div>
-            <p className="text-xs text-on-surface-variant/60">Rising Edges</p>
-            <p className="text-lg font-bold">{event.risingEdges}</p>
+            <p className="text-xs text-on-surface-variant font-medium">Rising Edges</p>
+            <p className="text-lg font-bold text-on-surface">{event.risingEdges}</p>
           </div>
         </div>
-        <div className="flex items-center gap-3 bg-surface-container-low border border-outline-variant/10 p-3 rounded-lg">
+        <div className="flex items-center gap-3 bg-gray-50 border border-gray-100 p-3 rounded-xl">
           <TrendingUp size={20} className="text-minor" />
           <div>
-            <p className="text-xs text-on-surface-variant/60">Avg High</p>
-            <p className="text-lg font-bold">{event.avgHigh.toFixed(2)}</p>
+            <p className="text-xs text-on-surface-variant font-medium">Avg High</p>
+            <p className="text-lg font-bold text-on-surface">{event.avgHigh.toFixed(2)}</p>
           </div>
         </div>
       </div>

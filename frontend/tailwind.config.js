@@ -4,41 +4,43 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Modern Premium — Primary Palette
-        primary: "#4287f5",
-        "primary-dim": "#2563eb",
-        "primary-container": "#1e40af",
-        secondary: "#8b5cf6",
-        "secondary-dim": "#6d28d9",
-        "secondary-container": "#4c1d95",
-        tertiary: "#f43f5e",
-        "tertiary-dim": "#e11d48",
+        // Modern Premium — Primary Palette (Golden Theme)
+        primary: "#D4AF37", // Light Gold
+        "primary-dim": "#C9A227", // Accent Gold
+        "primary-container": "#FBF8F1", // Very Light Gold for backgrounds
+        
+        secondary: "#E6C76E", // Soft Gold
+        "secondary-dim": "#D4B351",
+        "secondary-container": "#FDFBF5",
 
+        tertiary: "#1A1A1A", // Dark Text
+        "tertiary-dim": "#4B5563", // Gray matching Secondary Text
+        
         // Semantic Colors
-        safe: "#10b981", // emerald-500
-        minor: "#f59e0b", // amber-500
-        severe: "#ef4444", // red-500
-        error: "#fca5a5", // red-300
+        safe: "#10B981", // emerald-500
+        minor: "#F59E0B", // amber-500
+        severe: "#EF4444", // red-500
+        error: "#FCA5A5", // red-300
 
-        // Surface System (Slate Premium)
+        // Surface System (Light Premium)
         surface: {
-          DEFAULT: "#0f172a", // slate-900
-          dim: "#020617", // slate-950
-          bright: "#1e293b", // slate-800
-          container: "#0f172a",
-          "container-low": "#020617",
-          "container-high": "#1e293b",
-          "container-highest": "#334155", // slate-700
-          "container-lowest": "#000000",
+          DEFAULT: "#FAFAFA", // Light Background
+          dim: "#F3F4F6", // Gray-100
+          bright: "#FFFFFF", // White
+          container: "#FFFFFF",
+          "container-low": "#FAFAFA",
+          "container-high": "#F9FAFB",
+          "container-highest": "#F3F4F6",
+          "container-lowest": "#FFFFFF",
         },
-        "on-surface": "#f8fafc", // slate-50
-        "on-surface-variant": "#94a3b8", // slate-400
-        outline: "#475569", // slate-600
-        "outline-variant": "#334155", // slate-700
+        "on-surface": "#1A1A1A", // Primary text
+        "on-surface-variant": "#6B7280", // Secondary text (muted gray)
+        outline: "#E5E7EB", // gray-200
+        "outline-variant": "#D1D5DB", // gray-300
       },
       fontFamily: {
-        sans: ["Inter", "Manrope", "sans-serif"],
-        display: ["Space Grotesk", "Inter", "sans-serif"],
+        sans: ["Inter", "Poppins", "sans-serif"],
+        display: ["Poppins", "Inter", "sans-serif"],
         mono: ["JetBrains Mono", "monospace"],
       },
       animation: {
@@ -56,16 +58,16 @@ export default {
         "pulse-glow": {
           "0%, 100%": {
             opacity: "1",
-            boxShadow: "0 0 20px rgba(66, 135, 245, 0.3)",
+            boxShadow: "0 0 20px rgba(212, 175, 55, 0.2)",
           },
           "50%": {
             opacity: "0.8",
-            boxShadow: "0 0 40px rgba(66, 135, 245, 0.6)",
+            boxShadow: "0 0 40px rgba(212, 175, 55, 0.4)",
           },
         },
         "slide-in": {
-          "0%": { transform: "translateX(-20px)", opacity: "0" },
-          "100%": { transform: "translateX(0)", opacity: "1" },
+          "0%": { transform: "translateY(20px)", opacity: "0" },
+          "100%": { transform: "translateY(0)", opacity: "1" },
         },
         "fade-in": {
           "0%": { opacity: "0" },
@@ -73,7 +75,7 @@ export default {
         },
         "float": {
           "0%, 100%": { transform: "translateY(0px)" },
-          "50%": { transform: "translateY(-20px)" },
+          "50%": { transform: "translateY(-10px)" },
         },
         "gradient-shift": {
           "0%, 100%": { backgroundPosition: "0% 50%" },
@@ -85,27 +87,26 @@ export default {
         },
         "glow-pulse": {
           "0%, 100%": {
-            boxShadow: "0 0 20px rgba(66, 135, 245, 0.15), 0 0 40px rgba(139, 92, 246, 0.05)",
+            boxShadow: "0 4px 15px rgba(212, 175, 55, 0.15)",
           },
           "50%": {
-            boxShadow: "0 0 30px rgba(66, 135, 245, 0.3), 0 0 60px rgba(139, 92, 246, 0.1)",
+            boxShadow: "0 8px 25px rgba(212, 175, 55, 0.3)",
           },
         },
       },
       backgroundImage: {
-        "gradient-primary": "linear-gradient(135deg, #4287f5, #8b5cf6)",
-        "gradient-hero": "linear-gradient(135deg, #4287f5, #3b82f6, #8b5cf6)",
-        "gradient-surface": "linear-gradient(135deg, rgba(66, 135, 245, 0.05), rgba(139, 92, 246, 0.05))",
-        "gradient-glass": "linear-gradient(135deg, rgba(30, 41, 59, 0.4), rgba(15, 23, 42, 0.8))",
+        "gradient-primary": "linear-gradient(135deg, #D4AF37, #E6C76E)",
+        "gradient-secondary": "linear-gradient(135deg, #E6C76E, #C9A227)",
+        "gradient-hero": "linear-gradient(135deg, #FAFAFA, #FEFCF6, #FFF9EB)",
+        "gradient-surface": "linear-gradient(135deg, rgba(255, 255, 255, 1), rgba(250, 250, 250, 0.9))",
       },
       backdropBlur: {
-        "glass": "24px",
+        "glass": "16px",
       },
       boxShadow: {
-        "glow": "0 0 20px rgba(66, 135, 245, 0.3), 0 0 40px rgba(66, 135, 245, 0.1)",
-        "glow-lg": "0 0 30px rgba(66, 135, 245, 0.4), 0 0 60px rgba(66, 135, 245, 0.15)",
-        "glow-violet": "0 0 20px rgba(139, 92, 246, 0.3), 0 0 40px rgba(139, 92, 246, 0.1)",
-        "glow-amber": "0 0 20px rgba(245, 158, 11, 0.3), 0 0 40px rgba(245, 158, 11, 0.1)",
+        "glow": "0 10px 30px rgba(0, 0, 0, 0.05)",
+        "glow-lg": "0 20px 40px rgba(0, 0, 0, 0.08)",
+        "glow-gold": "0 10px 25px rgba(212, 175, 55, 0.2)",
       },
     },
   },

@@ -172,7 +172,7 @@ const Signup = () => {
             </div>
 
             <div>
-              <label className="text-sm font-medium mb-2 text-gray-300 flex items-center gap-2">
+              <label className="text-sm font-medium mb-2 text-on-surface-variant flex items-center gap-2">
                 <Mail size={16} />
                 Email Address *
               </label>
@@ -190,7 +190,7 @@ const Signup = () => {
 
           <div className="grid md:grid-cols-2 gap-6">
             <div>
-              <label className="text-sm font-medium mb-2 text-gray-300 flex items-center gap-2">
+              <label className="text-sm font-medium mb-2 text-on-surface-variant flex items-center gap-2">
                 <Building size={16} />
                 Company Name
               </label>
@@ -205,7 +205,7 @@ const Signup = () => {
             </div>
 
             <div>
-              <label className="text-sm font-medium mb-2 text-gray-300 flex items-center gap-2">
+              <label className="text-sm font-medium mb-2 text-on-surface-variant flex items-center gap-2">
                 <Phone size={16} />
                 Phone Number
               </label>
@@ -222,7 +222,7 @@ const Signup = () => {
 
           <div className="grid md:grid-cols-2 gap-6">
             <div>
-              <label className="text-sm font-medium mb-2 text-gray-300 flex items-center gap-2">
+              <label className="text-sm font-medium mb-2 text-on-surface-variant flex items-center gap-2">
                 <Lock size={16} />
                 Password *
               </label>
@@ -239,7 +239,7 @@ const Signup = () => {
             </div>
 
             <div>
-              <label className="text-sm font-medium mb-2 text-gray-300 flex items-center gap-2">
+              <label className="text-sm font-medium mb-2 text-on-surface-variant flex items-center gap-2">
                 <Lock size={16} />
                 Confirm Password *
               </label>

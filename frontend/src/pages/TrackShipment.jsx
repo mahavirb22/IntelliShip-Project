@@ -322,7 +322,7 @@ const TrackShipment = () => {
                   {events.slice(0, 10).map((event) => (
                     <div
                       key={event._id}
-                      className="flex flex-col md:flex-row md:items-center md:justify-between bg-surface-container-low border border-outline-variant/10 shadow-lg rounded-lg p-3"
+                      className="flex flex-col md:flex-row md:items-center md:justify-between bg-gray-50 border border-gray-100 shadow-sm hover:shadow-md transition-shadow rounded-xl p-4"
                     >
                       <div className="flex items-center gap-3">
                         <StatusBadge status={event.severity} size="sm" />

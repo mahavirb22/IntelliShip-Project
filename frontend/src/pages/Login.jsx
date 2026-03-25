@@ -128,7 +128,7 @@ const Login = () => {
           </div>
 
           <div>
-            <label className="text-sm font-medium mb-2 text-gray-300 flex items-center gap-2">
+            <label className="text-sm font-medium mb-2 text-on-surface-variant flex items-center gap-2">
               <Lock size={16} />
               Password
             </label>

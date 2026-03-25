@@ -18,6 +18,7 @@ import {
 } from "recharts";
 import { motion } from "framer-motion";
 import Sidebar from "../components/Sidebar";
+import Navbar from "../components/Navbar";
 import { getAnalytics } from "../services/api";
 
 const Dashboard = () => {
@@ -122,24 +123,25 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="flex flex-col lg:flex-row min-h-screen bg-surface">
-      <Sidebar />
+    <div className="min-h-screen bg-surface flex flex-col">
+      <Navbar />
+      <div className="flex flex-1 w-full max-w-[1400px] mx-auto">
+        <Sidebar />
 
-      <main className="flex-1 w-full min-w-0 p-4 lg:p-8 overflow-y-auto">
-        <div className="max-w-7xl mx-auto">
+        <main className="flex-1 min-w-0 p-4 lg:p-8 overflow-y-auto">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="mb-8 mt-12 lg:mt-0"
+            transition={{ duration: 0.4 }}
+            className="mb-8"
           >
-          <h1 className="text-4xl font-bold mb-2 font-display gradient-text">
-            Dashboard
-          </h1>
-          <p className="text-on-surface-variant">
-            Real-time logistics and event intelligence.
-          </p>
-        </motion.div>
+            <h1 className="text-3xl font-bold mb-2 font-display text-on-surface">
+              Logistics Overview
+            </h1>
+            <p className="text-on-surface-variant">
+              Real-time analytics and tracking insights.
+            </p>
+          </motion.div>
 
         {loading ? (
           <div className="flex justify-center py-20">
@@ -162,11 +164,10 @@ const Dashboard = () => {
                     whileHover={{ 
                       y: -4,
                       scale: 1.02,
-                      boxShadow: `0 8px 32px ${card.glowColor}`,
+                      boxShadow: `0 15px 35px rgba(0,0,0,0.04), 0 0 20px ${card.glowColor}`,
                     }}
-                    className="glass-card group cursor-default relative overflow-hidden"
+                    className="glass-card group cursor-default relative overflow-hidden bg-white"
                   >
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none" />
                     
                     <div className="flex items-start justify-between relative z-10">
                       <div>
@@ -179,7 +180,7 @@ const Dashboard = () => {
                         <IconComponent size={24} />
                       </div>
                     </div>
-                    <div className="mt-5 pt-4 border-t border-outline-variant/20 relative z-10">
+                    <div className="mt-5 pt-4 border-t border-gray-100 relative z-10">
                       <div className="flex items-center gap-2 text-xs text-on-surface-variant/80 font-medium">
                         <div className="relative flex h-2 w-2">
                           <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${card.color.split(' ')[0].replace('/10', '')}`}></span>
@@ -196,15 +197,15 @@ const Dashboard = () => {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-              className="glass-card"
+              transition={{ delay: 0.3 }}
+              className="glass-card bg-white mt-8"
             >
-              <h2 className="text-2xl font-bold mb-6 font-display">
-                Event Frequency <span className="text-on-surface-variant font-normal text-base">(Last 7 Days)</span>
+              <h2 className="text-xl font-bold mb-6 font-display text-on-surface">
+                Event Frequency <span className="text-on-surface-variant font-normal text-sm ml-2">(Last 7 Days)</span>
               </h2>
               {chartData.length === 0 ? (
                 <div className="text-center py-12">
-                  <Package size={48} className="mx-auto text-on-surface-variant/30 mb-4" />
+                  <Package size={48} className="mx-auto text-gray-300 mb-4" />
                   <p className="text-on-surface-variant">No event data available yet.</p>
                 </div>
               ) : (
@@ -213,19 +214,19 @@ const Dashboard = () => {
                     <BarChart data={chartData}>
                       <CartesianGrid 
                         strokeDasharray="3 3" 
-                        stroke="rgba(255,255,255,0.04)" 
+                        stroke="rgba(0,0,0,0.05)" 
                         vertical={false}
                       />
                       <XAxis 
                         dataKey="day" 
-                        stroke="#BBC9CE" 
+                        stroke="#6B7280" 
                         tick={{ fontSize: 12 }}
-                        axisLine={{ stroke: 'rgba(255,255,255,0.08)' }}
+                        axisLine={{ stroke: 'rgba(0,0,0,0.1)' }}
                       />
                       <YAxis 
-                        stroke="#BBC9CE" 
+                        stroke="#6B7280" 
                         tick={{ fontSize: 12 }}
-                        axisLine={{ stroke: 'rgba(255,255,255,0.08)' }}
+                        axisLine={{ stroke: 'rgba(0,0,0,0.1)' }}
                       />
                       <Tooltip content={<CustomTooltip />} />
                       <Legend 
@@ -259,8 +260,8 @@ const Dashboard = () => {
             </motion.div>
           </>
         )}
-        </div>
-      </main>
+        </main>
+      </div>
     </div>
   );
 };

@@ -19,39 +19,39 @@ const StatusBadge = ({
     switch (status?.toLowerCase()) {
       case "created":
         return {
-          color: "bg-surface-container-high text-on-surface border-outline-variant/30",
+          color: "bg-gray-100 text-gray-700 border-gray-200",
           icon: Box,
           label: "Created",
         };
       case "packed":
         return {
-          color: "bg-primary-container/20 text-primary border-primary/30",
+          color: "bg-primary/10 text-primary-dim border-primary/20",
           icon: PackageCheck,
           label: "Packed",
         };
       case "safe":
         return {
-          color: "bg-safe/20 text-safe border-safe/50",
+          color: "bg-safe/10 text-emerald-600 border-safe/20",
           icon: CheckCircle,
           label: "Safe",
         };
       case "risk":
         return {
-          color: "bg-minor/20 text-minor border-minor/50",
+          color: "bg-minor/10 text-amber-600 border-minor/20",
           icon: AlertTriangle,
           label: "Risk",
         };
       case "in_transit":
       case "in transit":
         return {
-          color: "bg-secondary-container/20 text-secondary border-secondary/30",
+          color: "bg-secondary/10 text-secondary-dim border-secondary/20",
           icon: Truck,
           label: "In Transit",
         };
       case "out_for_delivery":
       case "out for delivery":
         return {
-          color: "bg-secondary-container/20 text-secondary border-secondary/30",
+          color: "bg-secondary/10 text-secondary-dim border-secondary/20",
           icon: Truck,
           label: "Out For Delivery",
         };
@@ -59,28 +59,28 @@ const StatusBadge = ({
       case "minor":
       case "moderate":
         return {
-          color: "bg-minor/20 text-minor border-minor/50",
+          color: "bg-minor/10 text-amber-600 border-minor/20",
           icon: AlertTriangle,
           label: "Warning",
         };
       case "damaged":
       case "severe":
         return {
-          color: "bg-severe/20 text-severe border-severe/50",
+          color: "bg-severe/10 text-red-600 border-severe/20",
           icon: AlertCircle,
           label: "Damaged",
-          glow: true,
+          glow: false,
         };
       case "delivered":
         return {
-          color: "bg-emerald-500/20 text-emerald-300 border-emerald-400/50",
+          color: "bg-safe/20 text-emerald-700 border-safe/30",
           icon: CheckCircle,
           label: "Delivered",
-          glow: true,
+          glow: false,
         };
       default:
         return {
-          color: "bg-surface-container-high text-on-surface-variant border-outline-variant/30",
+          color: "bg-gray-100 text-gray-500 border-gray-200",
           icon: CheckCircle,
           label: "Unknown",
         };

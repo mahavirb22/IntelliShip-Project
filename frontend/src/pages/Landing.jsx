@@ -29,23 +29,20 @@ const Landing = () => {
       icon: Zap,
       title: "Real-Time Monitoring",
       description:
-        "Track shipment integrity with millisecond precision using Edge AI sensors",
-      color: "from-amber-400 to-orange-500",
-      glow: "shadow-glow-amber",
+        "Track shipment integrity with millisecond precision using AI sensors",
+      color: "from-amber-100 to-amber-200 text-amber-600",
     },
     {
       icon: Shield,
       title: "Damage Prevention",
       description: "Immediate alerts for vibrations and impacts during transit",
-      color: "from-emerald-400 to-teal-500",
-      glow: "shadow-[0_0_20px_rgba(16,185,129,0.3)]",
+      color: "from-emerald-100 to-emerald-200 text-emerald-600",
     },
     {
       icon: TrendingUp,
       title: "Analytics Dashboard",
       description: "Comprehensive insights into your logistics operations",
-      color: "from-primary to-secondary",
-      glow: "shadow-glow",
+      color: "from-primary/20 to-primary/30 text-primary-dim",
     },
   ];
 
@@ -170,7 +167,7 @@ const Landing = () => {
             <br />
             <span className="inline-flex items-center gap-3">
               Monitoring{" "}
-              <Sparkles className="text-tertiary animate-pulse" size={40} />
+              <Sparkles className="text-primary-dim animate-pulse" size={40} />
             </span>
           </motion.h1>
 
@@ -232,7 +229,7 @@ const Landing = () => {
           >
             <button
               onClick={() => navigate("/signup")}
-              className="btn-primary text-lg px-8 py-4 shadow-glow"
+              className="btn-primary text-lg px-8 py-4 shadow-xl shadow-primary/20"
             >
               Get Started <ArrowRight className="inline ml-2" size={20} />
             </button>
@@ -271,9 +268,9 @@ const Landing = () => {
               <motion.div
                 whileHover={{ rotate: 360 }}
                 transition={{ duration: 0.6 }}
-                className={`bg-gradient-to-br ${feature.color} w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg`}
+                className={`bg-gradient-to-br ${feature.color} w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-sm`}
               >
-                <feature.icon size={40} className="text-white" />
+                <feature.icon size={40} />
               </motion.div>
               <h3 className="text-xl font-bold mb-3 font-display group-hover:text-primary transition-colors">
                 {feature.title}
@@ -344,16 +341,11 @@ const Landing = () => {
                 initial={{ scale: 0 }}
                 whileInView={{ scale: 1 }}
                 viewport={{ once: true }}
-                className="text-5xl font-bold mb-2 font-display"
-                style={{
-                  background: "linear-gradient(135deg, #00D9FF, #00B4D8)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                }}
+                className="text-5xl font-bold mb-2 font-display gradient-text"
               >
                 99.9%
               </motion.div>
-              <p className="text-on-surface-variant">Uptime Guarantee</p>
+              <p className="text-on-surface-variant mt-2 font-medium">Uptime Guarantee</p>
             </div>
             <div>
               <motion.div
@@ -365,7 +357,7 @@ const Landing = () => {
               >
                 &lt;100ms
               </motion.div>
-              <p className="text-on-surface-variant">Response Time</p>
+              <p className="text-on-surface-variant mt-2 font-medium">Response Time</p>
             </div>
             <div>
               <motion.div
@@ -373,16 +365,11 @@ const Landing = () => {
                 whileInView={{ scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.2 }}
-                className="text-5xl font-bold mb-2 font-display"
-                style={{
-                  background: "linear-gradient(135deg, #7C3AED, #D2BBFF)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                }}
+                className="text-5xl font-bold mb-2 font-display gradient-text"
               >
                 24/7
               </motion.div>
-              <p className="text-on-surface-variant">Real-Time Monitoring</p>
+              <p className="text-on-surface-variant mt-2 font-medium">Real-Time Monitoring</p>
             </div>
           </div>
         </motion.div>
@@ -406,7 +393,7 @@ const Landing = () => {
             </p>
             <button
               onClick={() => navigate("/signup")}
-              className="btn-primary text-lg px-12 py-4 shadow-glow-lg"
+              className="btn-primary text-lg px-12 py-4 shadow-xl shadow-primary/20"
             >
               Start Free Trial <ArrowRight className="inline ml-2" />
             </button>

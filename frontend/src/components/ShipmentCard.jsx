@@ -33,13 +33,13 @@ const ShipmentCard = ({ shipment, index = 0 }) => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.1, duration: 0.3 }}
       whileHover={{ y: -5, transition: { duration: 0.2 } }}
-      className="glass-card cursor-pointer hover:shadow-2xl hover:border-primary/50 transition-all duration-300"
+      className="glass-card cursor-pointer"
       onClick={() => navigate(`/dashboard/shipments/${shipment.shipment_id}`)}
     >
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-3">
-          <div className="bg-primary/20 p-3 rounded-lg">
-            <Package size={24} className="text-primary" />
+          <div className="bg-primary/10 p-3 rounded-xl">
+            <Package size={24} className="text-primary-dim" />
           </div>
           <div>
             <h3 className="font-bold text-lg">{shipment.product_name}</h3>

@@ -1,18 +1,15 @@
 import React, { useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import {
   LayoutDashboard,
   Package,
   PlusCircle,
-  LogOut,
   Menu,
   X,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { clearAuthState } from "../services/authStorage";
-import { logout } from "../services/api";
 
 const MENU_ITEMS = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
@@ -20,25 +17,9 @@ const MENU_ITEMS = [
   { icon: Package, label: "Active Shipments", path: "/dashboard/shipments" },
 ];
 
-const MenuContent = ({ collapsed, setIsOpen, handleLogout }) => (
+const MenuContent = ({ collapsed, setIsOpen }) => (
   <div className="flex flex-col h-full w-full">
-    <div className={`mb-8 flex items-center ${collapsed ? "justify-center" : "justify-between"}`}>
-      {!collapsed && (
-        <div>
-          <h1 className="text-2xl font-bold font-display gradient-text">
-            IntelliShip
-          </h1>
-          <p className="text-xs text-on-surface-variant mt-1">AI Logistics Platform</p>
-        </div>
-      )}
-      {collapsed && (
-        <div className="bg-primary/20 p-2 rounded-xl text-primary">
-          <Package size={24} />
-        </div>
-      )}
-    </div>
-
-    <nav className="flex-1 space-y-2 mt-4">
+    <nav className="flex-1 space-y-2 mt-2">
       {MENU_ITEMS.map((item) => (
         <NavLink
           key={item.path}
@@ -47,83 +28,56 @@ const MenuContent = ({ collapsed, setIsOpen, handleLogout }) => (
           className={({ isActive }) =>
             `flex items-center ${collapsed ? "justify-center px-0" : "px-4"} py-3 rounded-xl transition-all duration-300 relative group ${
               isActive
-                ? "bg-primary/10 text-primary shadow-[inset_2px_0_0_0_#4287f5]"
-                : "text-on-surface-variant/80 hover:bg-surface-container-high hover:text-on-surface"
+                ? "bg-primary/10 text-primary font-medium"
+                : "text-on-surface-variant hover:bg-gray-50 hover:text-on-surface"
             }`
           }
-          onClick={() => setIsOpen(false)}
+          onClick={() => setIsOpen && setIsOpen(false)}
           title={collapsed ? item.label : undefined}
         >
-          <item.icon size={20} className="group-hover:drop-shadow-[0_0_8px_rgba(66,135,245,0.5)] transition-all" />
-          {!collapsed && <span className="font-medium ml-3">{item.label}</span>}
+          <item.icon size={20} className={({ isActive }) => isActive ? "text-primary drop-shadow-[0_2px_4px_rgba(212,175,55,0.4)]" : "group-hover:text-primary transition-colors"} />
+          {!collapsed && <span className="ml-3 font-medium">{item.label}</span>}
           
           {/* Tooltip for collapsed mode */}
           {collapsed && (
-            <div className="absolute left-full ml-4 px-3 py-1.5 bg-surface-container-highest text-on-surface text-sm rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50 border border-outline-variant/30 backdrop-blur-md">
+            <div className="absolute left-full ml-4 px-3 py-1.5 bg-white shadow-lg text-on-surface text-sm rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50 border border-gray-100 font-medium">
               {item.label}
             </div>
           )}
         </NavLink>
       ))}
     </nav>
-
-    <button
-      onClick={handleLogout}
-      className={`flex items-center ${collapsed ? "justify-center" : "px-4"} py-3 mt-auto rounded-xl text-on-surface-variant/60 hover:bg-red-500/10 hover:text-red-400 transition-all duration-300 w-full group relative`}
-      title={collapsed ? "Logout" : undefined}
-    >
-      <LogOut size={20} className="group-hover:drop-shadow-[0_0_8px_rgba(239,68,68,0.5)]" />
-      {!collapsed && <span className="font-medium ml-3">Logout</span>}
-      {collapsed && (
-        <div className="absolute left-full ml-4 px-3 py-1.5 bg-surface-container-highest text-on-surface text-sm rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50 border border-outline-variant/30 backdrop-blur-md">
-          Logout
-        </div>
-      )}
-    </button>
   </div>
 );
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false); // Mobile menu state
   const [isCollapsed, setIsCollapsed] = useState(false); // Desktop collapse state
-  const navigate = useNavigate();
-
-  const handleLogout = async () => {
-    try {
-      await logout();
-    } catch {
-      // Client-side logout should still proceed when API logout fails.
-    }
-    clearAuthState();
-    navigate("/login");
-  };
-
-
 
   return (
     <>
-      {/* Mobile Menu Button - Glassmorphism */}
+      {/* Mobile Menu Button - Floating bottom right or could be in navbar */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="lg:hidden fixed top-4 right-4 z-[60] bg-surface-container/60 backdrop-blur-xl border border-outline-variant/30 p-2.5 rounded-xl shadow-lg text-on-surface hover:bg-surface-container-high transition-colors"
+        className="lg:hidden fixed bottom-6 right-6 z-[60] bg-white border border-gray-200 p-3 rounded-full shadow-[0_10px_25px_rgba(0,0,0,0.1)] text-on-surface hover:text-primary hover:border-primary/30 transition-all"
       >
         {isOpen ? <X size={24} /> : <Menu size={24} />}
       </button>
 
-      {/* Desktop Sidebar (Sticky, non-fixed for flex/grid layouts) */}
+      {/* Desktop Sidebar */}
       <aside 
-        className={`hidden lg:flex flex-col sticky top-0 h-screen p-6 bg-surface-container-low/40 backdrop-blur-2xl border-r border-outline-variant/20 transition-all duration-300 shrink-0 z-40 ${
-          isCollapsed ? "w-[100px]" : "w-[280px]"
+        className={`hidden lg:flex flex-col sticky top-16 h-[calc(100vh-4rem)] p-4 bg-white border-r border-gray-100 transition-all duration-300 shrink-0 z-40 ${
+          isCollapsed ? "w-[88px]" : "w-[260px]"
         }`}
       >
-        <MenuContent collapsed={isCollapsed} setIsOpen={setIsOpen} handleLogout={handleLogout} />
+        <MenuContent collapsed={isCollapsed} />
         
         {/* Collapse Toggle */}
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className="absolute -right-3 top-8 bg-surface-container-high border border-outline-variant/30 rounded-full p-1.5 text-on-surface hover:text-primary hover:border-primary/50 transition-all shadow-lg z-50"
+          className="absolute -right-3 top-6 bg-white border border-gray-200 rounded-full p-1.5 text-on-surface-variant hover:text-primary hover:border-primary/50 transition-all shadow-sm z-50"
         >
-          {isCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+          {isCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
         </button>
       </aside>
 
@@ -135,7 +89,7 @@ const Sidebar = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="lg:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
+              className="lg:hidden fixed inset-0 bg-black/20 backdrop-blur-sm z-40"
               onClick={() => setIsOpen(false)}
             />
             <motion.aside
@@ -143,9 +97,17 @@ const Sidebar = () => {
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="lg:hidden fixed left-0 top-0 h-full w-[280px] bg-surface/95 backdrop-blur-3xl p-6 z-50 flex flex-col border-r border-outline-variant/20 shadow-2xl"
+              className="lg:hidden fixed left-0 top-0 h-full w-[280px] bg-white p-6 z-50 flex flex-col border-r border-gray-100 shadow-2xl"
             >
-              <MenuContent collapsed={false} setIsOpen={setIsOpen} handleLogout={handleLogout} />
+              <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center gap-2 text-primary font-display font-bold text-xl">
+                  <Package /> IntelliShip
+                </div>
+                <button onClick={() => setIsOpen(false)} className="p-2 text-gray-500 hover:text-gray-900 bg-gray-50 rounded-full">
+                  <X size={20} />
+                </button>
+              </div>
+              <MenuContent collapsed={false} setIsOpen={setIsOpen} />
             </motion.aside>
           </>
         )}
