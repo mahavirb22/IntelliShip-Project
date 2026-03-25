@@ -7,7 +7,10 @@ import {
   RefreshCw,
   Search,
   ShieldCheck,
+  Download,
 } from "lucide-react";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 import StatusBadge from "../components/StatusBadge";
 import Timeline from "../components/Timeline";
 import ComplaintModal from "../components/ComplaintModal";
@@ -191,6 +194,144 @@ const TrackShipment = () => {
     }
   };
 
+  const getPriority = (severity) => {
+    if (severity === "HIGH") return 3;
+    if (severity === "MEDIUM") return 2;
+    return 1;
+  };
+
+  const getHighestSeverity = (eventList) => {
+    if (!Array.isArray(eventList) || eventList.length === 0) {
+      return "LOW";
+    }
+
+    return eventList.reduce((highest, event) => {
+      const current = String(event?.severity || "LOW").toUpperCase();
+      return getPriority(current) > getPriority(highest) ? current : highest;
+    }, "LOW");
+  };
+
+  const handleDownloadReport = () => {
+    if (!shipment?.shipment_id) {
+      addToast("No data available to generate report", "error");
+      return;
+    }
+
+    try {
+      const doc = new jsPDF({ unit: "pt", format: "a4" });
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const generatedAt = new Date().toLocaleString();
+      const reportShipmentId = shipment.shipment_id;
+      const totalEvents = Array.isArray(events) ? events.length : 0;
+      const highestSeverity = getHighestSeverity(events);
+      const latestStatus = shipment?.status || "N/A";
+      const safeMobile = form.mobile.trim() || "Not provided";
+
+      let cursorY = 52;
+
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(20);
+      doc.text("IntelliShip Shipment Report", 40, cursorY);
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(10);
+      doc.text(`Generated: ${generatedAt}`, pageWidth - 40, cursorY, {
+        align: "right",
+      });
+      cursorY += 18;
+      doc.text(`Shipment ID: ${reportShipmentId}`, 40, cursorY);
+
+      cursorY += 24;
+      doc.setDrawColor(220, 220, 220);
+      doc.line(40, cursorY, pageWidth - 40, cursorY);
+
+      cursorY += 26;
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(13);
+      doc.text("Shipment Details", 40, cursorY);
+
+      cursorY += 18;
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(11);
+      const shipmentDetails = [
+        ["Shipment ID", reportShipmentId],
+        ["Customer Mobile", safeMobile],
+        ["Current Status", shipment?.status || "N/A"],
+        ["Condition", shipment?.condition || "N/A"],
+      ];
+
+      shipmentDetails.forEach(([label, value]) => {
+        doc.setFont("helvetica", "bold");
+        doc.text(`${label}:`, 40, cursorY);
+        doc.setFont("helvetica", "normal");
+        doc.text(String(value), 170, cursorY);
+        cursorY += 16;
+      });
+
+      cursorY += 10;
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(13);
+      doc.text("Summary", 40, cursorY);
+
+      cursorY += 18;
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(11);
+      const summaryRows = [
+        ["Total Events", totalEvents],
+        ["Highest Severity Detected", highestSeverity],
+        ["Latest Status", latestStatus],
+      ];
+
+      summaryRows.forEach(([label, value]) => {
+        doc.setFont("helvetica", "bold");
+        doc.text(`${label}:`, 40, cursorY);
+        doc.setFont("helvetica", "normal");
+        doc.text(String(value), 230, cursorY);
+        cursorY += 16;
+      });
+
+      const eventTableRows = Array.isArray(events)
+        ? events.map((event) => [
+            event?.timestamp
+              ? new Date(event.timestamp).toLocaleString()
+              : "Unknown",
+            String(event?.severity || "LOW").toUpperCase(),
+            event?.intensity ?? "-",
+            event?.message ||
+              `${String(event?.severity || "LOW").toUpperCase()} vibration event`,
+          ])
+        : [];
+
+      autoTable(doc, {
+        startY: cursorY + 14,
+        head: [["Time", "Severity", "Intensity", "Description"]],
+        body:
+          eventTableRows.length > 0
+            ? eventTableRows
+            : [["-", "-", "-", "No event logs available"]],
+        styles: {
+          fontSize: 10,
+          cellPadding: 6,
+          overflow: "linebreak",
+        },
+        headStyles: {
+          fillColor: [30, 41, 59],
+          textColor: 255,
+          fontStyle: "bold",
+        },
+        alternateRowStyles: {
+          fillColor: [248, 250, 252],
+        },
+        margin: { left: 40, right: 40 },
+      });
+
+      doc.save(`Shipment_REPORT_${reportShipmentId}.pdf`);
+      addToast("Report downloaded successfully");
+    } catch {
+      addToast("Failed to generate report", "error");
+    }
+  };
+
   const hasHighSeverityEvent = events.some(
     (event) => event.severity === "HIGH",
   );
@@ -300,17 +441,26 @@ const TrackShipment = () => {
                 <StatusBadge status={shipment?.condition} size="lg" animate />
               </div>
 
-              <button
-                onClick={handleRefresh}
-                disabled={refreshing}
-                className="btn-secondary flex items-center gap-2 mx-auto"
-              >
-                <RefreshCw
-                  size={20}
-                  className={refreshing ? "animate-spin" : ""}
-                />
-                Refresh
-              </button>
+              <div className="flex flex-wrap justify-center gap-3">
+                <button
+                  onClick={handleRefresh}
+                  disabled={refreshing}
+                  className="btn-secondary flex items-center gap-2"
+                >
+                  <RefreshCw
+                    size={20}
+                    className={refreshing ? "animate-spin" : ""}
+                  />
+                  Refresh
+                </button>
+                <button
+                  onClick={handleDownloadReport}
+                  className="btn-primary flex items-center gap-2"
+                >
+                  <Download size={18} />
+                  Download Report
+                </button>
+              </div>
 
               {hasHighSeverityEvent && (
                 <div className="mt-6">
