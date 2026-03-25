@@ -9,7 +9,7 @@ const Timeline = ({ logs }) => {
   if (normalizedLogs.length === 0) {
     return (
       <div className="glass-card text-center py-12">
-        <p className="text-gray-400">No logs recorded yet</p>
+        <p className="text-on-surface-variant">No logs recorded yet</p>
       </div>
     );
   }
@@ -29,7 +29,7 @@ const Timeline = ({ logs }) => {
       return "bg-severe/20 text-severe border-severe/50";
     }
     if (normalized === "MANUAL") {
-      return "bg-blue-500/20 text-blue-300 border-blue-400/50";
+      return "bg-primary/20 text-primary border-primary/30";
     }
     return "bg-safe/20 text-safe border-safe/50";
   };
@@ -37,13 +37,13 @@ const Timeline = ({ logs }) => {
   return (
     <div className="glass-card overflow-x-auto">
       <div className="min-w-[540px]">
-        <div className="grid grid-cols-12 px-4 py-3 border-b border-white/10 text-xs uppercase tracking-wide text-gray-400">
+        <div className="grid grid-cols-12 px-4 py-3 border-b border-outline-variant/10 text-xs uppercase tracking-wide text-on-surface-variant">
           <p className="col-span-4">Time</p>
           <p className="col-span-6">Message</p>
           <p className="col-span-2">Type</p>
         </div>
 
-        <div className="divide-y divide-white/10">
+        <div className="divide-y divide-outline-variant/10">
           {normalizedLogs.map((log, index) => (
             <motion.div
               key={`${log.timestamp}-${index}`}
@@ -52,7 +52,7 @@ const Timeline = ({ logs }) => {
               transition={{ delay: index * 0.04 }}
               className="grid grid-cols-12 px-4 py-4 text-sm"
             >
-              <p className="col-span-4 text-gray-300">
+              <p className="col-span-4 text-on-surface-variant">
                 {formatTime(log.timestamp)}
               </p>
               <p className="col-span-6 font-medium">{log.message}</p>

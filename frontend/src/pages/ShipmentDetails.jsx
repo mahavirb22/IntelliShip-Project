@@ -132,7 +132,7 @@ const ShipmentDetails = () => {
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary mx-auto mb-4" />
-            <p className="text-gray-400">Loading shipment details...</p>
+            <p className="text-on-surface-variant">Loading shipment details...</p>
           </div>
         </div>
       </div>
@@ -162,10 +162,10 @@ const ShipmentDetails = () => {
 
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <h1 className="text-4xl font-bold mb-2">
+              <h1 className="text-4xl font-bold mb-2 font-display gradient-text">
                 {shipment?.product_name}
               </h1>
-              <p className="text-gray-400">ID: {id}</p>
+              <p className="text-on-surface-variant">ID: {id}</p>
             </div>
             <div className="flex gap-2">
               <button
@@ -203,7 +203,7 @@ const ShipmentDetails = () => {
         >
           <div className="mb-6">
             <Package size={64} className="mx-auto mb-4 text-primary" />
-            <h2 className="text-2xl font-bold mb-2">Current Status</h2>
+            <h2 className="text-2xl font-bold mb-2 font-display">Current Status</h2>
           </div>
           <StatusBadge status={shipment?.status} size="lg" animate />
           <div className="mt-4 flex justify-center">
@@ -240,7 +240,7 @@ const ShipmentDetails = () => {
           transition={{ delay: 0.13 }}
           className="glass-card mb-8"
         >
-          <h2 className="text-2xl font-bold mb-4">Update Lifecycle Status</h2>
+          <h2 className="text-2xl font-bold mb-6 font-display">Update Lifecycle Status</h2>
           <div className="flex flex-col md:flex-row gap-3">
             <select
               className="input-field flex-1"
@@ -265,7 +265,7 @@ const ShipmentDetails = () => {
           transition={{ delay: 0.15 }}
           className="glass-card mb-8"
         >
-          <h2 className="text-2xl font-bold mb-4">Add Delivery Update</h2>
+          <h2 className="text-2xl font-bold mb-6 font-display">Add Delivery Update</h2>
           <div className="flex flex-col md:flex-row gap-3">
             <input
               type="text"
@@ -307,24 +307,24 @@ const ShipmentDetails = () => {
           transition={{ delay: 0.2 }}
           className="glass-card mb-8"
         >
-          <h2 className="text-2xl font-bold mb-4">Shipment Information</h2>
+          <h2 className="text-2xl font-bold mb-6 font-display">Shipment Information</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <p className="text-gray-400 text-sm">Customer Name</p>
+              <p className="text-on-surface-variant text-sm">Customer Name</p>
               <p className="font-medium text-lg">{shipment?.customer_name}</p>
             </div>
             <div>
-              <p className="text-gray-400 text-sm">Fragility Level</p>
+              <p className="text-on-surface-variant text-sm">Fragility Level</p>
               <p className="font-medium text-lg">{shipment?.fragility_level}</p>
             </div>
             <div>
-              <p className="text-gray-400 text-sm">Total Events</p>
+              <p className="text-on-surface-variant text-sm">Total Events</p>
               <p className="font-medium text-lg">
                 {logs.filter((log) => log.type === "EVENT").length}
               </p>
             </div>
             <div>
-              <p className="text-gray-400 text-sm">Tracking URL</p>
+              <p className="text-on-surface-variant text-sm">Tracking URL</p>
               <p className="font-medium text-sm text-primary truncate">
                 {window.location.origin}/track/{id}
               </p>
@@ -338,7 +338,7 @@ const ShipmentDetails = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
         >
-          <h2 className="text-2xl font-bold mb-6">Shipment Timeline</h2>
+          <h2 className="text-2xl font-bold mb-6 font-display">Shipment Timeline</h2>
           <Timeline logs={logs} />
         </motion.div>
       </main>

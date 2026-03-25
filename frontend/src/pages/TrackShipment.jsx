@@ -188,7 +188,7 @@ const TrackShipment = () => {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary mx-auto mb-4" />
-          <p className="text-gray-400">Loading tracking information...</p>
+          <p className="text-on-surface-variant">Loading tracking information...</p>
         </div>
       </div>
     );
@@ -207,10 +207,10 @@ const TrackShipment = () => {
       <div className="glass-card mb-8 max-w-6xl mx-auto">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-primary mb-1">
+            <h1 className="text-2xl font-bold font-display gradient-text mb-1">
               IntelliShip Tracking
             </h1>
-            <p className="text-sm text-gray-400">
+            <p className="text-sm text-on-surface-variant">
               Track with shipment ID and mobile number
             </p>
           </div>
@@ -262,7 +262,7 @@ const TrackShipment = () => {
               {submitting ? "Checking..." : "Track Shipment"}
             </button>
           </div>
-          <p className="text-xs text-gray-400 mt-3 flex items-center gap-2">
+          <p className="text-xs text-on-surface-variant/60 mt-3 flex items-center gap-2">
             <ShieldCheck size={14} />
             Mobile number unlocks secure tracking details.
           </p>
@@ -274,10 +274,10 @@ const TrackShipment = () => {
               className={`glass-card mb-8 text-center py-10 ${shipment?.condition === "DAMAGED" ? "animate-pulse-glow border-severe/50" : ""}`}
             >
               <Package size={60} className="mx-auto mb-4 text-primary" />
-              <h2 className="text-3xl font-bold mb-2">
+              <h2 className="text-3xl font-bold mb-2 font-display">
                 {shipment?.product_name}
               </h2>
-              <p className="text-gray-400 mb-4">
+              <p className="text-on-surface-variant mb-4">
                 Shipment ID: {shipment?.shipment_id}
               </p>
 
@@ -312,9 +312,9 @@ const TrackShipment = () => {
             </div>
 
             <div className="glass-card mb-8">
-              <h2 className="text-2xl font-bold mb-4">Vibration Event Logs</h2>
+              <h2 className="text-2xl font-bold mb-6 font-display">Vibration Event Logs</h2>
               {events.length === 0 ? (
-                <p className="text-gray-400">
+                <p className="text-on-surface-variant">
                   No vibration events recorded yet.
                 </p>
               ) : (
@@ -322,18 +322,18 @@ const TrackShipment = () => {
                   {events.slice(0, 10).map((event) => (
                     <div
                       key={event._id}
-                      className="flex flex-col md:flex-row md:items-center md:justify-between bg-white/5 rounded-lg p-3"
+                      className="flex flex-col md:flex-row md:items-center md:justify-between bg-surface-container-low border border-outline-variant/10 shadow-lg rounded-lg p-3"
                     >
                       <div className="flex items-center gap-3">
                         <StatusBadge status={event.severity} size="sm" />
-                        <p className="text-sm text-gray-300">
+                        <p className="text-sm text-on-surface-variant">
                           Intensity:{" "}
                           <span className="font-semibold">
                             {event.intensity}
                           </span>
                         </p>
                       </div>
-                      <p className="text-xs text-gray-500 mt-2 md:mt-0">
+                      <p className="text-xs text-on-surface-variant/60 mt-2 md:mt-0">
                         {new Date(event.timestamp).toLocaleString()}
                       </p>
                     </div>
@@ -343,7 +343,7 @@ const TrackShipment = () => {
             </div>
 
             <div>
-              <h2 className="text-2xl font-bold mb-6">Shipment Timeline</h2>
+              <h2 className="text-2xl font-bold mb-6 font-display">Shipment Timeline</h2>
               <Timeline logs={normalizedTimeline} />
             </div>
           </>

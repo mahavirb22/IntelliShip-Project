@@ -38,8 +38,8 @@ const EventCard = ({ event, index }) => {
 
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
         <div className="flex items-center gap-3">
-          <Clock size={20} className="text-gray-400" />
-          <span className="text-sm text-gray-300">
+          <Clock size={20} className="text-on-surface-variant/60" />
+          <span className="text-sm text-on-surface-variant">
             {formatDate(event.timestamp)}
           </span>
         </div>
@@ -47,17 +47,17 @@ const EventCard = ({ event, index }) => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-        <div className="flex items-center gap-3 bg-white/5 p-3 rounded-lg">
+        <div className="flex items-center gap-3 bg-surface-container-low border border-outline-variant/10 p-3 rounded-lg">
           <Activity size={20} className="text-primary" />
           <div>
-            <p className="text-xs text-gray-400">Rising Edges</p>
+            <p className="text-xs text-on-surface-variant/60">Rising Edges</p>
             <p className="text-lg font-bold">{event.risingEdges}</p>
           </div>
         </div>
-        <div className="flex items-center gap-3 bg-white/5 p-3 rounded-lg">
+        <div className="flex items-center gap-3 bg-surface-container-low border border-outline-variant/10 p-3 rounded-lg">
           <TrendingUp size={20} className="text-minor" />
           <div>
-            <p className="text-xs text-gray-400">Avg High</p>
+            <p className="text-xs text-on-surface-variant/60">Avg High</p>
             <p className="text-lg font-bold">{event.avgHigh.toFixed(2)}</p>
           </div>
         </div>

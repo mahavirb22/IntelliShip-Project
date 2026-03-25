@@ -60,7 +60,7 @@ const ComplaintModal = ({ isOpen, onClose, shipmentId, onSubmit }) => {
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium mb-2 text-gray-300">
+                  <label className="block text-sm font-medium mb-2 text-on-surface-variant">
                     Shipment ID
                   </label>
                   <input
@@ -72,7 +72,7 @@ const ComplaintModal = ({ isOpen, onClose, shipmentId, onSubmit }) => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-2 text-gray-300">
+                  <label className="block text-sm font-medium mb-2 text-on-surface-variant">
                     Description *
                   </label>
                   <textarea
@@ -133,7 +133,7 @@ const ComplaintModal = ({ isOpen, onClose, shipmentId, onSubmit }) => {
               <h3 className="text-2xl font-bold text-safe mb-2">
                 Complaint Submitted!
               </h3>
-              <p className="text-gray-300">
+              <p className="text-on-surface-variant/80">
                 We'll review your complaint shortly.
               </p>
             </motion.div>

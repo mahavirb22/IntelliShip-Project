@@ -43,7 +43,7 @@ const ShipmentCard = ({ shipment, index = 0 }) => {
           </div>
           <div>
             <h3 className="font-bold text-lg">{shipment.product_name}</h3>
-            <p className="text-sm text-gray-400">ID: {shipment.shipment_id}</p>
+            <p className="text-sm text-on-surface-variant">ID: {shipment.shipment_id}</p>
           </div>
         </div>
         <StatusBadge status={shipment.status} size="sm" />
@@ -51,22 +51,22 @@ const ShipmentCard = ({ shipment, index = 0 }) => {
 
       <div className="space-y-2 mt-4 text-sm">
         <div className="flex justify-between">
-          <span className="text-gray-400">Fragility:</span>
+          <span className="text-on-surface-variant">Fragility:</span>
           <span className="font-medium">
             {shipment.fragility_level || "N/A"}
           </span>
         </div>
         <div className="flex justify-between">
-          <span className="text-gray-400">Customer:</span>
+          <span className="text-on-surface-variant">Customer:</span>
           <span className="font-medium">{shipment.customer_name}</span>
         </div>
         <div className="flex justify-between">
-          <span className="text-gray-400">Events:</span>
+          <span className="text-on-surface-variant">Events:</span>
           <span className="font-medium">{eventLogs.length}</span>
         </div>
         {lastLog?.timestamp && (
           <div className="flex justify-between">
-            <span className="text-gray-400">Last Update:</span>
+            <span className="text-on-surface-variant">Last Update:</span>
             <span className="font-medium">{formatDate(lastLog.timestamp)}</span>
           </div>
         )}

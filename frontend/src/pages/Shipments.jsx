@@ -62,8 +62,8 @@ const Shipments = () => {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <h1 className="text-4xl font-bold mb-2">Active Shipments</h1>
-          <p className="text-gray-400">
+          <h1 className="text-4xl font-bold mb-2 font-display gradient-text">Active Shipments</h1>
+          <p className="text-on-surface-variant">
             Monitor all your shipments in real-time
           </p>
         </motion.div>
@@ -79,7 +79,7 @@ const Shipments = () => {
             <div className="flex-1 relative">
               <Search
                 size={20}
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant/60"
               />
               <input
                 type="text"
@@ -90,7 +90,7 @@ const Shipments = () => {
               />
             </div>
             <div className="flex items-center gap-2">
-              <Filter size={20} className="text-gray-400" />
+              <Filter size={20} className="text-on-surface-variant/60" />
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
@@ -111,7 +111,7 @@ const Shipments = () => {
         {/* Shipments Grid */}
         {loading ? (
           <div className="flex items-center justify-center py-20">
-            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary" />
+            <div className="animate-spin rounded-full h-16 w-16 border-2 border-transparent border-t-primary border-r-primary" />
           </div>
         ) : filteredShipments.length === 0 ? (
           <motion.div
@@ -119,7 +119,7 @@ const Shipments = () => {
             animate={{ opacity: 1 }}
             className="glass-card text-center py-20"
           >
-            <p className="text-xl text-gray-400">No shipments found</p>
+            <p className="text-xl text-on-surface-variant">No shipments found</p>
           </motion.div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

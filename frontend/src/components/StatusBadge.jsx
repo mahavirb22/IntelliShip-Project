@@ -19,13 +19,13 @@ const StatusBadge = ({
     switch (status?.toLowerCase()) {
       case "created":
         return {
-          color: "bg-slate-500/20 text-slate-200 border-slate-400/50",
+          color: "bg-surface-container-high text-on-surface border-outline-variant/30",
           icon: Box,
           label: "Created",
         };
       case "packed":
         return {
-          color: "bg-cyan-500/20 text-cyan-200 border-cyan-400/50",
+          color: "bg-primary-container/20 text-primary border-primary/30",
           icon: PackageCheck,
           label: "Packed",
         };
@@ -44,14 +44,14 @@ const StatusBadge = ({
       case "in_transit":
       case "in transit":
         return {
-          color: "bg-blue-500/20 text-blue-300 border-blue-400/50",
+          color: "bg-secondary-container/20 text-secondary border-secondary/30",
           icon: Truck,
           label: "In Transit",
         };
       case "out_for_delivery":
       case "out for delivery":
         return {
-          color: "bg-indigo-500/20 text-indigo-200 border-indigo-400/50",
+          color: "bg-secondary-container/20 text-secondary border-secondary/30",
           icon: Truck,
           label: "Out For Delivery",
         };
@@ -80,7 +80,7 @@ const StatusBadge = ({
         };
       default:
         return {
-          color: "bg-gray-500/20 text-gray-400 border-gray-500/50",
+          color: "bg-surface-container-high text-on-surface-variant border-outline-variant/30",
           icon: CheckCircle,
           label: "Unknown",
         };

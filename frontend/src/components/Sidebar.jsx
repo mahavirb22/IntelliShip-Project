@@ -35,25 +35,28 @@ const Sidebar = () => {
   const MenuContent = () => (
     <>
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-primary">IntelliShip</h1>
-        <p className="text-sm text-gray-400">AI Logistics Platform</p>
+        <h1 className="text-2xl font-bold font-display gradient-text">
+          IntelliShip
+        </h1>
+        <p className="text-sm text-on-surface-variant">AI Logistics Platform</p>
       </div>
 
-      <nav className="flex-1 space-y-2">
+      <nav className="flex-1 space-y-1">
         {menuItems.map((item) => (
           <NavLink
             key={item.path}
             to={item.path}
+            end={item.path === "/dashboard"}
             className={({ isActive }) =>
-              `flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
+              `flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 relative group ${
                 isActive
-                  ? "bg-primary text-white shadow-lg"
-                  : "text-gray-300 hover:bg-white/10"
+                  ? "bg-primary/10 text-primary border-l-[3px] border-primary"
+                  : "text-on-surface-variant/80 hover:bg-surface-container-high hover:text-on-surface"
               }`
             }
             onClick={() => setIsOpen(false)}
           >
-            <item.icon size={20} />
+            <item.icon size={20} className="group-hover:drop-shadow-[0_0_6px_rgba(0,217,255,0.4)] transition-all" />
             <span className="font-medium">{item.label}</span>
           </NavLink>
         ))}
@@ -61,7 +64,7 @@ const Sidebar = () => {
 
       <button
         onClick={handleLogout}
-        className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-red-500/20 hover:text-red-400 transition-all duration-200 w-full"
+        className="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant/60 hover:bg-red-500/10 hover:text-red-400 transition-all duration-300 w-full mt-auto"
       >
         <LogOut size={20} />
         <span className="font-medium">Logout</span>
@@ -80,7 +83,7 @@ const Sidebar = () => {
       </button>
 
       {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex flex-col w-64 glass-card min-h-screen p-6">
+      <aside className="hidden lg:flex flex-col w-64 min-h-screen p-6 bg-surface-container-lowest border-r border-outline-variant/10">
         <MenuContent />
       </aside>
 
@@ -92,7 +95,7 @@ const Sidebar = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="lg:hidden fixed inset-0 bg-black/50 z-40"
+              className="lg:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
               onClick={() => setIsOpen(false)}
             />
             <motion.aside
@@ -100,7 +103,7 @@ const Sidebar = () => {
               animate={{ x: 0 }}
               exit={{ x: -300 }}
               transition={{ type: "spring", damping: 20 }}
-              className="lg:hidden fixed left-0 top-0 h-full w-64 glass-card p-6 z-50 flex flex-col"
+              className="lg:hidden fixed left-0 top-0 h-full w-64 bg-surface-container-lowest p-6 z-50 flex flex-col border-r border-outline-variant/10"
             >
               <MenuContent />
             </motion.aside>

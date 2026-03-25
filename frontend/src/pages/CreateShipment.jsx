@@ -116,10 +116,10 @@ IntelliShip Team`;
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <h1 className="text-4xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
+          <h1 className="text-4xl font-bold mb-2 font-display gradient-text">
             Create New Shipment
           </h1>
-          <p className="text-gray-400">Fill in the details to start tracking</p>
+          <p className="text-on-surface-variant">Fill in the details to start tracking</p>
         </motion.div>
 
         <AnimatePresence mode="wait">
@@ -132,15 +132,15 @@ IntelliShip Team`;
               className="glass-card max-w-2xl"
             >
               <div className="flex items-center gap-3 mb-6">
-                <div className="bg-gradient-to-br from-primary/30 to-purple-500/30 p-3 rounded-lg">
+                <div className="bg-gradient-to-br from-primary/15 to-secondary/15 p-3 rounded-lg border border-primary/20">
                   <Package size={28} className="text-primary" />
                 </div>
-                <h2 className="text-2xl font-bold">Shipment Details</h2>
+                <h2 className="text-2xl font-bold font-display">Shipment Details</h2>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium mb-2 text-gray-300">
+                  <label className="block text-sm font-medium mb-2 text-on-surface-variant">
                     Product Name *
                   </label>
                   <input
@@ -155,7 +155,7 @@ IntelliShip Team`;
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-2 text-gray-300">
+                  <label className="block text-sm font-medium mb-2 text-on-surface-variant">
                     Fragility Level *
                   </label>
                   <select
@@ -176,7 +176,7 @@ IntelliShip Team`;
 
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium mb-2 text-gray-300">
+                    <label className="block text-sm font-medium mb-2 text-on-surface-variant">
                       Customer Name *
                     </label>
                     <input
@@ -191,7 +191,7 @@ IntelliShip Team`;
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium mb-2 text-gray-300">
+                    <label className="block text-sm font-medium mb-2 text-on-surface-variant">
                       Customer Email *
                     </label>
                     <input
@@ -207,7 +207,7 @@ IntelliShip Team`;
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-2 text-gray-300">
+                  <label className="block text-sm font-medium mb-2 text-on-surface-variant">
                     Customer Phone (Optional)
                   </label>
                   <input
@@ -218,7 +218,7 @@ IntelliShip Team`;
                     placeholder="+1 234 567 8900"
                     className="input-field"
                   />
-                  <p className="mt-1 text-xs text-gray-500">
+                  <p className="mt-1 text-xs text-on-surface-variant/60">
                     Phone number can be used to send tracking info via SMS
                   </p>
                 </div>
@@ -267,17 +267,17 @@ IntelliShip Team`;
                 >
                   <CheckCircle size={64} className="text-safe" />
                 </motion.div>
-                <h2 className="text-3xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
+                <h2 className="text-3xl font-bold mb-4 font-display gradient-text">
                   Shipment Created Successfully!
                 </h2>
-                <p className="text-gray-300 mb-2">
+                <p className="text-on-surface-variant mb-2">
                   Share this tracking information with your customer
                 </p>
               </div>
 
               {/* Shipment ID */}
-              <div className="bg-white/5 rounded-xl p-6 mb-6 border border-white/10">
-                <p className="text-gray-400 text-sm mb-2">Shipment ID:</p>
+              <div className="bg-surface-container-low rounded-xl p-6 mb-6 border border-outline-variant/20">
+                <p className="text-on-surface-variant text-sm mb-2">Shipment ID:</p>
                 <div className="flex items-center justify-between gap-4">
                   <p className="text-2xl font-mono text-primary font-bold">
                     {createdShipmentId}
@@ -293,8 +293,8 @@ IntelliShip Team`;
               </div>
 
               {/* Tracking Link */}
-              <div className="bg-white/5 rounded-xl p-6 mb-6 border border-white/10">
-                <p className="text-gray-400 text-sm mb-2">Tracking Link:</p>
+              <div className="bg-surface-container-low rounded-xl p-6 mb-6 border border-outline-variant/20">
+                <p className="text-on-surface-variant text-sm mb-2">Tracking Link:</p>
                 <div className="flex items-center gap-4 mb-4">
                   <input
                     type="text"
@@ -340,25 +340,25 @@ IntelliShip Team`;
               </div>
 
               {/* QR Code */}
-              <div className="bg-white/5 rounded-xl p-6 mb-6 border border-white/10 text-center">
-                <p className="text-gray-400 text-sm mb-4">
+              <div className="bg-surface-container-low rounded-xl p-6 mb-6 border border-outline-variant/20 text-center">
+                <p className="text-on-surface-variant text-sm mb-4">
                   QR Code for Easy Tracking (Print on shipping label)
                 </p>
                 <div className="bg-white p-6 rounded-xl inline-block">
                   <QRCode value={trackingLink} size={200} />
                 </div>
-                <p className="text-xs text-gray-500 mt-4">
+                <p className="text-xs text-on-surface-variant/60 mt-4">
                   Customers can scan this QR code to instantly track their
                   shipment
                 </p>
               </div>
 
               {/* Additional Info */}
-              <div className="bg-gradient-to-r from-primary/10 to-purple-500/10 rounded-xl p-6 mb-6 border border-primary/30">
+              <div className="bg-gradient-to-r from-primary/10 to-secondary/10 rounded-xl p-6 mb-6 border border-primary/20">
                 <h3 className="font-semibold mb-3 text-primary">
                   How customers can track:
                 </h3>
-                <ul className="space-y-2 text-sm text-gray-300">
+                <ul className="space-y-2 text-sm text-on-surface-variant">
                   <li className="flex items-start gap-2">
                     <span className="text-primary">1.</span>
                     <span>Click the tracking link you shared with them</span>

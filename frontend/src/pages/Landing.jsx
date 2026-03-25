@@ -30,19 +30,22 @@ const Landing = () => {
       title: "Real-Time Monitoring",
       description:
         "Track shipment integrity with millisecond precision using Edge AI sensors",
-      color: "from-yellow-400 to-orange-500",
+      color: "from-amber-400 to-orange-500",
+      glow: "shadow-glow-amber",
     },
     {
       icon: Shield,
       title: "Damage Prevention",
       description: "Immediate alerts for vibrations and impacts during transit",
-      color: "from-green-400 to-emerald-500",
+      color: "from-emerald-400 to-teal-500",
+      glow: "shadow-[0_0_20px_rgba(16,185,129,0.3)]",
     },
     {
       icon: TrendingUp,
       title: "Analytics Dashboard",
       description: "Comprehensive insights into your logistics operations",
-      color: "from-blue-400 to-purple-500",
+      color: "from-primary to-secondary",
+      glow: "shadow-glow",
     },
   ];
 
@@ -66,45 +69,45 @@ const Landing = () => {
 
   return (
     <div className="min-h-screen overflow-hidden relative">
-      {/* Animated Background Elements */}
+      {/* Animated Background Orbs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <motion.div
           animate={{
             scale: [1, 1.2, 1],
             rotate: [0, 180, 360],
-            opacity: [0.3, 0.5, 0.3],
+            opacity: [0.2, 0.35, 0.2],
           }}
           transition={{
             duration: 30,
             repeat: Infinity,
             ease: "linear",
           }}
-          className="absolute top-20 left-10 w-96 h-96 bg-primary/20 rounded-full blur-3xl"
+          className="absolute top-20 left-10 w-96 h-96 bg-primary/15 rounded-full blur-3xl"
         />
         <motion.div
           animate={{
             scale: [1.2, 1, 1.2],
             rotate: [360, 180, 0],
-            opacity: [0.3, 0.5, 0.3],
+            opacity: [0.2, 0.35, 0.2],
           }}
           transition={{
             duration: 35,
             repeat: Infinity,
             ease: "linear",
           }}
-          className="absolute bottom-20 right-10 w-[500px] h-[500px] bg-purple-500/20 rounded-full blur-3xl"
+          className="absolute bottom-20 right-10 w-[500px] h-[500px] bg-secondary/15 rounded-full blur-3xl"
         />
         <motion.div
           animate={{
             scale: [1, 1.3, 1],
-            opacity: [0.2, 0.4, 0.2],
+            opacity: [0.1, 0.25, 0.1],
           }}
           transition={{
             duration: 25,
             repeat: Infinity,
             ease: "linear",
           }}
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan-500/10 rounded-full blur-3xl"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/8 rounded-full blur-3xl"
         />
       </div>
 
@@ -116,10 +119,10 @@ const Landing = () => {
         className="glass-card mx-4 mt-4 mb-8 flex justify-between items-center px-8 py-4 relative z-10"
       >
         <div>
-          <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
+          <h1 className="text-2xl font-bold font-display gradient-text">
             IntelliShip
           </h1>
-          <p className="text-xs text-gray-400">AI Logistics Platform</p>
+          <p className="text-xs text-on-surface-variant">AI Logistics Platform</p>
         </div>
         <div className="flex gap-4">
           <button onClick={() => navigate("/signup")} className="btn-secondary">
@@ -147,11 +150,11 @@ const Landing = () => {
             className="inline-block mb-8"
           >
             <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-primary/30 to-purple-500/30 rounded-3xl blur-xl"></div>
-              <div className="relative bg-gradient-to-br from-primary/20 to-purple-500/20 p-8 rounded-3xl backdrop-blur-sm border border-primary/30">
+              <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-3xl blur-xl"></div>
+              <div className="relative bg-gradient-to-br from-primary/10 to-secondary/10 p-8 rounded-3xl backdrop-blur-sm border border-primary/20">
                 <Package
                   size={80}
-                  className="text-primary drop-shadow-[0_0_15px_rgba(66,135,245,0.5)]"
+                  className="text-primary drop-shadow-[0_0_15px_rgba(0,217,255,0.5)]"
                 />
               </div>
             </div>
@@ -161,13 +164,13 @@ const Landing = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-5xl md:text-7xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-primary to-purple-500"
+            className="text-5xl md:text-7xl font-bold mb-6 font-display gradient-text-hero"
           >
             Real-Time AI Logistics
             <br />
             <span className="inline-flex items-center gap-3">
               Monitoring{" "}
-              <Sparkles className="text-yellow-400 animate-pulse" size={40} />
+              <Sparkles className="text-tertiary animate-pulse" size={40} />
             </span>
           </motion.h1>
 
@@ -175,7 +178,7 @@ const Landing = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4 }}
-            className="text-xl md:text-2xl text-gray-300 mb-12 max-w-3xl mx-auto"
+            className="text-xl md:text-2xl text-on-surface-variant mb-12 max-w-3xl mx-auto"
           >
             Edge AI powered shipment integrity tracking for modern supply
             chains. Monitor every vibration, every impact, in real-time.
@@ -188,12 +191,12 @@ const Landing = () => {
             transition={{ delay: 0.6 }}
             className="max-w-2xl mx-auto mb-12"
           >
-            <div className="glass-card p-8 border-2 border-primary/30">
-              <h3 className="text-2xl font-bold mb-4 flex items-center justify-center gap-2">
+            <div className="glass-card p-8 border border-primary/20">
+              <h3 className="text-2xl font-bold mb-4 flex items-center justify-center gap-2 font-display">
                 <Search className="text-primary" />
                 Track Your Shipment
               </h3>
-              <p className="text-gray-400 mb-6 text-sm">
+              <p className="text-on-surface-variant mb-6 text-sm">
                 Enter your shipment ID or scan the QR code from your package
               </p>
               <form onSubmit={handleTrackShipment} className="flex gap-3">
@@ -212,7 +215,7 @@ const Landing = () => {
                   Track
                 </button>
               </form>
-              <div className="mt-4 flex items-center justify-center gap-4 text-sm text-gray-500">
+              <div className="mt-4 flex items-center justify-center gap-4 text-sm text-on-surface-variant/60">
                 <div className="flex items-center gap-2">
                   <QrCode size={16} />
                   <span>Or scan QR code on package</span>
@@ -229,7 +232,7 @@ const Landing = () => {
           >
             <button
               onClick={() => navigate("/signup")}
-              className="btn-primary text-lg px-8 py-4 shadow-lg shadow-primary/50"
+              className="btn-primary text-lg px-8 py-4 shadow-glow"
             >
               Get Started <ArrowRight className="inline ml-2" size={20} />
             </button>
@@ -249,7 +252,7 @@ const Landing = () => {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className="text-4xl md:text-5xl font-bold text-center mb-16 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500"
+          className="text-4xl md:text-5xl font-bold text-center mb-16 font-display gradient-text"
         >
           Why Choose IntelliShip?
         </motion.h2>
@@ -263,7 +266,7 @@ const Landing = () => {
               viewport={{ once: true }}
               transition={{ delay: index * 0.2 }}
               whileHover={{ y: -10, scale: 1.02 }}
-              className="glass-card text-center group cursor-pointer border border-white/10 hover:border-primary/50 transition-all duration-300"
+              className="glass-card text-center group cursor-pointer"
             >
               <motion.div
                 whileHover={{ rotate: 360 }}
@@ -272,10 +275,10 @@ const Landing = () => {
               >
                 <feature.icon size={40} className="text-white" />
               </motion.div>
-              <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors">
+              <h3 className="text-xl font-bold mb-3 font-display group-hover:text-primary transition-colors">
                 {feature.title}
               </h3>
-              <p className="text-gray-400">{feature.description}</p>
+              <p className="text-on-surface-variant">{feature.description}</p>
             </motion.div>
           ))}
         </div>
@@ -287,7 +290,7 @@ const Landing = () => {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className="text-4xl md:text-5xl font-bold text-center mb-16 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500"
+          className="text-4xl md:text-5xl font-bold text-center mb-16 font-display gradient-text"
         >
           How It Works
         </motion.h2>
@@ -304,13 +307,13 @@ const Landing = () => {
             >
               <motion.div
                 whileHover={{ scale: 1.05 }}
-                className="glass-card border border-white/10 hover:border-primary/50 transition-all duration-300"
+                className="glass-card"
               >
-                <div className="text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-br from-primary/50 to-purple-500/50 mb-4">
+                <div className="text-6xl font-bold gradient-text mb-4 font-display">
                   {step.number}
                 </div>
-                <h3 className="text-2xl font-bold mb-2">{step.title}</h3>
-                <p className="text-gray-400">{step.description}</p>
+                <h3 className="text-2xl font-bold mb-2 font-display">{step.title}</h3>
+                <p className="text-on-surface-variant">{step.description}</p>
               </motion.div>
               {index < steps.length - 1 && (
                 <motion.div
@@ -319,7 +322,7 @@ const Landing = () => {
                   viewport={{ once: true }}
                   className="hidden md:block absolute top-1/2 -right-4 transform translate-x-full -translate-y-1/2"
                 >
-                  <ArrowRight size={32} className="text-primary/50" />
+                  <ArrowRight size={32} className="text-primary/40" />
                 </motion.div>
               )}
             </motion.div>
@@ -333,7 +336,7 @@ const Landing = () => {
           initial={{ opacity: 0, scale: 0.9 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
-          className="glass-card border-2 border-primary/30"
+          className="glass-card border border-primary/20"
         >
           <div className="grid md:grid-cols-3 gap-8 text-center py-8">
             <div>
@@ -341,11 +344,16 @@ const Landing = () => {
                 initial={{ scale: 0 }}
                 whileInView={{ scale: 1 }}
                 viewport={{ once: true }}
-                className="text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-primary mb-2"
+                className="text-5xl font-bold mb-2 font-display"
+                style={{
+                  background: "linear-gradient(135deg, #00D9FF, #00B4D8)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                }}
               >
                 99.9%
               </motion.div>
-              <p className="text-gray-400">Uptime Guarantee</p>
+              <p className="text-on-surface-variant">Uptime Guarantee</p>
             </div>
             <div>
               <motion.div
@@ -353,11 +361,11 @@ const Landing = () => {
                 whileInView={{ scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.1 }}
-                className="text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-500 mb-2"
+                className="text-5xl font-bold mb-2 font-display gradient-text"
               >
                 &lt;100ms
               </motion.div>
-              <p className="text-gray-400">Response Time</p>
+              <p className="text-on-surface-variant">Response Time</p>
             </div>
             <div>
               <motion.div
@@ -365,11 +373,16 @@ const Landing = () => {
                 whileInView={{ scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.2 }}
-                className="text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-pink-500 mb-2"
+                className="text-5xl font-bold mb-2 font-display"
+                style={{
+                  background: "linear-gradient(135deg, #7C3AED, #D2BBFF)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                }}
               >
                 24/7
               </motion.div>
-              <p className="text-gray-400">Real-Time Monitoring</p>
+              <p className="text-on-surface-variant">Real-Time Monitoring</p>
             </div>
           </div>
         </motion.div>
@@ -381,19 +394,19 @@ const Landing = () => {
           initial={{ opacity: 0, scale: 0.9 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
-          className="glass-card text-center py-16 max-w-4xl mx-auto border-2 border-primary/30 relative overflow-hidden"
+          className="glass-card text-center py-16 max-w-4xl mx-auto border border-primary/20 relative overflow-hidden"
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-purple-500/10"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-secondary/5"></div>
           <div className="relative z-10">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 font-display gradient-text">
               Ready to Transform Your Logistics?
             </h2>
-            <p className="text-xl text-gray-300 mb-8">
+            <p className="text-xl text-on-surface-variant mb-8">
               Join leading companies using AI-powered shipment monitoring
             </p>
             <button
               onClick={() => navigate("/signup")}
-              className="btn-primary text-lg px-12 py-4 shadow-2xl shadow-primary/50"
+              className="btn-primary text-lg px-12 py-4 shadow-glow-lg"
             >
               Start Free Trial <ArrowRight className="inline ml-2" />
             </button>
@@ -402,9 +415,9 @@ const Landing = () => {
       </section>
 
       {/* Footer */}
-      <footer className="container mx-auto px-4 py-8 text-center text-gray-400 border-t border-white/10 mt-20 relative z-10">
+      <footer className="container mx-auto px-4 py-8 text-center text-on-surface-variant border-t border-outline-variant/20 mt-20 relative z-10">
         <div className="mb-4">
-          <h3 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500 mb-2">
+          <h3 className="text-2xl font-bold font-display gradient-text mb-2">
             IntelliShip
           </h3>
           <p className="text-sm">Edge AI Smart Logistics Platform</p>

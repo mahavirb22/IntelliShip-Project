@@ -52,7 +52,7 @@ const Login = () => {
             repeat: Infinity,
             ease: "linear",
           }}
-          className="absolute -top-40 -left-40 w-80 h-80 bg-primary/20 rounded-full blur-3xl"
+          className="absolute -top-40 -left-40 w-80 h-80 bg-primary/15 rounded-full blur-3xl"
         />
         <motion.div
           animate={{
@@ -64,7 +64,7 @@ const Login = () => {
             repeat: Infinity,
             ease: "linear",
           }}
-          className="absolute -bottom-40 -right-40 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl"
+          className="absolute -bottom-40 -right-40 w-96 h-96 bg-secondary/15 rounded-full blur-3xl"
         />
       </div>
 
@@ -91,14 +91,14 @@ const Login = () => {
             transition={{ duration: 3, repeat: Infinity, repeatDelay: 2 }}
             className="inline-block mb-4"
           >
-            <div className="bg-gradient-to-br from-primary/30 to-purple-500/30 p-6 rounded-2xl backdrop-blur-sm border border-primary/30">
+            <div className="bg-gradient-to-br from-primary/15 to-secondary/15 p-6 rounded-2xl backdrop-blur-sm border border-primary/20">
               <Package size={48} className="text-primary" />
             </div>
           </motion.div>
-          <h1 className="text-4xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
+          <h1 className="text-4xl font-bold mb-2 font-display gradient-text">
             Welcome Back
           </h1>
-          <p className="text-gray-400">Sign in to your seller account</p>
+          <p className="text-on-surface-variant">Sign in to your seller account</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -113,7 +113,7 @@ const Login = () => {
           )}
 
           <div>
-            <label className="text-sm font-medium mb-2 text-gray-300 flex items-center gap-2">
+            <label className="text-sm font-medium mb-2 text-on-surface-variant flex items-center gap-2">
               <Mail size={16} />
               Email Address
             </label>
@@ -161,12 +161,12 @@ const Login = () => {
           </button>
         </form>
 
-        <div className="mt-6 text-center text-sm text-gray-400">
+        <div className="mt-6 text-center text-sm text-on-surface-variant">
           <p>
             Don't have an account?{" "}
             <Link
               to="/signup"
-              className="text-primary hover:text-blue-400 font-semibold transition-colors"
+              className="text-primary hover:text-primary-dim font-semibold transition-colors"
             >
               Sign Up
             </Link>
