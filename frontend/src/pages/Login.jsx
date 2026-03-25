@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate, Link } from "react-router-dom";
-import { LogIn, Package, ArrowLeft, Mail, Lock, Shield, Key } from "lucide-react";
+import { LogIn, Package, ArrowLeft, Mail, Lock, Shield, Key, ArrowRight } from "lucide-react";
 import { signin } from "../services/api";
 import { setAuthState } from "../services/authStorage";
 
