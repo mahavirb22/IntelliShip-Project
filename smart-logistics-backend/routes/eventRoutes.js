@@ -342,7 +342,7 @@ router.post("/", async (req, res) => {
     }
 
     shipment.logs.push({
-      message: `${eventMessageMap[finalSeverity]} (Batch of ${numericPulseCount} readings)`,
+      message: eventMessageMap[finalSeverity],
       type: "EVENT",
       timestamp: new Date(),
     });
