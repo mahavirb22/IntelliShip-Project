@@ -11,6 +11,9 @@ const HIGH_EVENT_DAMAGE_THRESHOLD = Number(
 const LOW_REPEAT_WINDOW_SECONDS = Number(
   process.env.LOW_REPEAT_WINDOW_SECONDS || 20,
 );
+const LOW_DUPLICATE_WINDOW_SECONDS = Number(
+  process.env.LOW_DUPLICATE_WINDOW_SECONDS || 10,
+);
 const LOW_MIN_MEANINGFUL_INTENSITY = Number(
   process.env.LOW_MIN_MEANINGFUL_INTENSITY || 15,
 );
@@ -99,20 +102,34 @@ const shouldFilterByNoise = ({
     return false;
   }
 
-  if (
-    severity === "LOW" &&
-    intensity < LOW_MIN_MEANINGFUL_INTENSITY &&
-    avgIntensity < LOW_MIN_MEANINGFUL_INTENSITY
-  ) {
-    return true;
-  }
+  if (severity === "LOW") {
+    const hasBatchSummary = Number(eventCount || 0) >= 10;
+    const hasLastEvent = Boolean(lastEvent);
+    const sameSeverityAsLast = lastEvent?.severity === "LOW";
+    const isLowDuplicate =
+      sameSeverityAsLast &&
+      isWithinWindow(lastEvent.timestamp, LOW_DUPLICATE_WINDOW_SECONDS);
 
-  if (
-    severity === "LOW" &&
-    lastEvent?.severity === "LOW" &&
-    isWithinWindow(lastEvent.timestamp, LOW_REPEAT_WINDOW_SECONDS)
-  ) {
-    return true;
+    if (isLowDuplicate) {
+      console.log("LOW event ignored (duplicate)");
+      return true;
+    }
+
+    const noRecentEvent =
+      !hasLastEvent ||
+      !isWithinWindow(lastEvent.timestamp, LOW_REPEAT_WINDOW_SECONDS);
+    const lastEventDifferentSeverity = hasLastEvent && !sameSeverityAsLast;
+    const veryLowSignal =
+      intensity < LOW_MIN_MEANINGFUL_INTENSITY &&
+      avgIntensity < LOW_MIN_MEANINGFUL_INTENSITY;
+
+    if (hasBatchSummary || noRecentEvent || lastEventDifferentSeverity) {
+      return false;
+    }
+
+    if (veryLowSignal) {
+      return true;
+    }
   }
 
   // Keep medium only when batch signal is strong enough.
@@ -130,6 +147,11 @@ const shouldFilterByNoise = ({
 
 const isDuplicateEvent = ({ severity, lastEvent }) => {
   if (!lastEvent) {
+    return false;
+  }
+
+  // LOW duplicates are handled with dedicated LOW window logic.
+  if (severity === "LOW") {
     return false;
   }
 
@@ -289,6 +311,10 @@ router.post("/", async (req, res) => {
     });
 
     await event.save();
+
+    if (finalSeverity === "LOW") {
+      console.log("LOW event stored");
+    }
 
     if (finalSeverity === "HIGH") {
       shipment.highEventCount = Number(shipment.highEventCount || 0) + 1;
