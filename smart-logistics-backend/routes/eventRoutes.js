@@ -36,10 +36,10 @@ const getSeverityByIntensity = (intensity) => {
   return "LOW";
 };
 
-const severityPriority = {
-  LOW: 1,
-  MEDIUM: 2,
-  HIGH: 3,
+const getPriority = (severity) => {
+  if (severity === "HIGH") return 3;
+  if (severity === "MEDIUM") return 2;
+  return 1;
 };
 
 const getHigherSeverity = (a, b) => {
@@ -50,7 +50,7 @@ const getHigherSeverity = (a, b) => {
     ? String(b).toUpperCase()
     : "LOW";
 
-  return severityPriority[first] >= severityPriority[second] ? first : second;
+  return getPriority(first) >= getPriority(second) ? first : second;
 };
 
 const isWithinWindow = (timestamp, windowSeconds) => {
@@ -202,11 +202,8 @@ router.post("/", async (req, res) => {
         ? toSeverityFromLegacyType(event_type)
         : "LOW";
 
-    // Preserve high-priority labels and prevent downgrading severity.
-    const normalizedSeverity = getHigherSeverity(
-      explicitSeverity,
-      inferredSeverity,
-    );
+    // Final severity is resolved by strict priority: HIGH > MEDIUM > LOW.
+    const finalSeverity = getHigherSeverity(explicitSeverity, inferredSeverity);
 
     const lastEvent = await Event.findOne({ shipment_id })
       .sort({ timestamp: -1 })
@@ -214,7 +211,7 @@ router.post("/", async (req, res) => {
 
     if (
       shouldFilterByNoise({
-        severity: normalizedSeverity,
+        severity: finalSeverity,
         intensity: numericIntensity,
         avgIntensity: numericAvgIntensity,
         eventCount: numericPulseCount,
@@ -228,7 +225,7 @@ router.post("/", async (req, res) => {
       });
     }
 
-    if (isDuplicateEvent({ severity: normalizedSeverity, lastEvent })) {
+    if (isDuplicateEvent({ severity: finalSeverity, lastEvent })) {
       return res.status(200).json({
         success: true,
         stored: false,
@@ -243,7 +240,7 @@ router.post("/", async (req, res) => {
       totalHigh: Number(totalHigh || 0),
       risingEdges: Number(risingEdges || 0),
       avgHigh: numericAvgIntensity,
-      severity: normalizedSeverity,
+      severity: finalSeverity,
     });
 
     const riskScore = Number(mlPrediction?.risk_score);
@@ -255,7 +252,7 @@ router.post("/", async (req, res) => {
     const event = new Event({
       shipment_id,
       event_type: event_type || "VIBRATION",
-      severity: normalizedSeverity,
+      severity: finalSeverity,
       intensity: numericIntensity,
       risingEdges: Number(risingEdges || 0),
       avgHigh: numericAvgIntensity,
@@ -269,12 +266,12 @@ router.post("/", async (req, res) => {
 
     await event.save();
 
-    if (normalizedSeverity === "HIGH") {
+    if (finalSeverity === "HIGH") {
       shipment.highEventCount = Number(shipment.highEventCount || 0) + 1;
     }
 
     shipment.latestRiskScore = normalizedRiskScore;
-    shipment.condition = toCondition(normalizedSeverity, normalizedRiskScore);
+    shipment.condition = toCondition(finalSeverity, normalizedRiskScore);
 
     const currentStatus = shipment.status;
     const canBeDamaged = ["PACKED", "IN_TRANSIT", "OUT_FOR_DELIVERY"].includes(
@@ -295,7 +292,7 @@ router.post("/", async (req, res) => {
     }
 
     shipment.logs.push({
-      message: `${eventMessageMap[normalizedSeverity]} (Batch of ${numericPulseCount} readings)`,
+      message: `${eventMessageMap[finalSeverity]} (Batch of ${numericPulseCount} readings)`,
       type: "EVENT",
       timestamp: new Date(),
     });
