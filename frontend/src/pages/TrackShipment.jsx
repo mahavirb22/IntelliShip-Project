@@ -26,7 +26,7 @@ const TrackShipment = () => {
   const prefilledId = shipment_id || searchParams.get("shipmentId") || "";
 
   const [form, setForm] = useState({
-    shipment_id: prefilledId,
+    shipment_id: "",
     mobile: "",
   });
 
@@ -112,6 +112,18 @@ const TrackShipment = () => {
 
   useEffect(() => {
     if (!prefilledId) {
+      return;
+    }
+
+    setForm((prev) =>
+      prev.shipment_id === prefilledId
+        ? prev
+        : { ...prev, shipment_id: prefilledId },
+    );
+  }, [prefilledId]);
+
+  useEffect(() => {
+    if (!prefilledId) {
       setLoading(false);
       return;
     }
@@ -188,7 +200,9 @@ const TrackShipment = () => {
       <div className="min-h-screen flex items-center justify-center bg-surface">
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary mx-auto mb-4" />
-          <p className="text-on-surface-variant">Loading tracking information...</p>
+          <p className="text-on-surface-variant">
+            Loading tracking information...
+          </p>
         </div>
       </div>
     );
@@ -312,7 +326,9 @@ const TrackShipment = () => {
             </div>
 
             <div className="glass-card mb-8">
-              <h2 className="text-2xl font-bold mb-6 font-display">Vibration Event Logs</h2>
+              <h2 className="text-2xl font-bold mb-6 font-display">
+                Vibration Event Logs
+              </h2>
               {events.length === 0 ? (
                 <p className="text-on-surface-variant">
                   No vibration events recorded yet.
@@ -343,7 +359,9 @@ const TrackShipment = () => {
             </div>
 
             <div>
-              <h2 className="text-2xl font-bold mb-6 font-display">Shipment Timeline</h2>
+              <h2 className="text-2xl font-bold mb-6 font-display">
+                Shipment Timeline
+              </h2>
               <Timeline logs={normalizedTimeline} />
             </div>
           </>
