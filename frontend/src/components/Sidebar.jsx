@@ -35,14 +35,18 @@ const MenuContent = ({ collapsed, setIsOpen }) => (
           onClick={() => setIsOpen && setIsOpen(false)}
           title={collapsed ? item.label : undefined}
         >
-          <item.icon size={20} className={({ isActive }) => isActive ? "text-primary drop-shadow-[0_2px_4px_rgba(212,175,55,0.4)]" : "group-hover:text-primary transition-colors"} />
-          {!collapsed && <span className="ml-3 font-medium">{item.label}</span>}
-          
-          {/* Tooltip for collapsed mode */}
-          {collapsed && (
-            <div className="absolute left-full ml-4 px-3 py-1.5 bg-white shadow-lg text-on-surface text-sm rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50 border border-gray-100 font-medium">
-              {item.label}
-            </div>
+          {({ isActive }) => (
+            <>
+              <item.icon size={20} className={isActive ? "text-primary drop-shadow-[0_2px_4px_rgba(212,175,55,0.4)]" : "group-hover:text-primary transition-colors"} />
+              {!collapsed && <span className="ml-3 font-medium">{item.label}</span>}
+              
+              {/* Tooltip for collapsed mode */}
+              {collapsed && (
+                <div className="absolute left-full ml-4 px-3 py-1.5 bg-white shadow-lg text-on-surface text-sm rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50 border border-gray-100 font-medium">
+                  {item.label}
+                </div>
+              )}
+            </>
           )}
         </NavLink>
       ))}
