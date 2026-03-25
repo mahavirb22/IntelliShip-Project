@@ -53,6 +53,27 @@ const getHigherSeverity = (a, b) => {
   return getPriority(first) >= getPriority(second) ? first : second;
 };
 
+const resolveFinalSeverity = ({ incomingSeverity, computedSeverity }) => {
+  const normalizedIncoming = EVENT_SEVERITY.includes(
+    String(incomingSeverity || "").toUpperCase(),
+  )
+    ? String(incomingSeverity).toUpperCase()
+    : "LOW";
+
+  const normalizedComputed = EVENT_SEVERITY.includes(
+    String(computedSeverity || "").toUpperCase(),
+  )
+    ? String(computedSeverity).toUpperCase()
+    : "LOW";
+
+  // Explicitly preserve all-low cases to prevent accidental upgrades.
+  if (normalizedIncoming === "LOW" && normalizedComputed === "LOW") {
+    return "LOW";
+  }
+
+  return getHigherSeverity(normalizedIncoming, normalizedComputed);
+};
+
 const isWithinWindow = (timestamp, windowSeconds) => {
   if (!timestamp || !Number.isFinite(windowSeconds) || windowSeconds <= 0) {
     return false;
@@ -193,8 +214,8 @@ router.post("/", async (req, res) => {
       });
     }
 
-    const inferredSeverity = getSeverityByIntensity(numericIntensity);
-    const explicitSeverity = EVENT_SEVERITY.includes(
+    const computedSeverity = getSeverityByIntensity(numericIntensity);
+    const incomingSeverity = EVENT_SEVERITY.includes(
       String(severity || "").toUpperCase(),
     )
       ? String(severity).toUpperCase()
@@ -202,8 +223,11 @@ router.post("/", async (req, res) => {
         ? toSeverityFromLegacyType(event_type)
         : "LOW";
 
-    // Final severity is resolved by strict priority: HIGH > MEDIUM > LOW.
-    const finalSeverity = getHigherSeverity(explicitSeverity, inferredSeverity);
+    // Safety-first resolution: incoming + intensity, highest priority wins.
+    const finalSeverity = resolveFinalSeverity({
+      incomingSeverity,
+      computedSeverity,
+    });
 
     const lastEvent = await Event.findOne({ shipment_id })
       .sort({ timestamp: -1 })
