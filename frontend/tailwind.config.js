@@ -4,37 +4,37 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Cybernetic Vanguard — Primary Palette
-        primary: "#00D9FF",
-        "primary-dim": "#00B4D8",
-        "primary-container": "#005B6C",
-        secondary: "#7C3AED",
-        "secondary-dim": "#6001D1",
-        "secondary-container": "#D2BBFF",
-        tertiary: "#F97316",
-        "tertiary-dim": "#FFB690",
+        // Modern Premium — Primary Palette
+        primary: "#4287f5",
+        "primary-dim": "#2563eb",
+        "primary-container": "#1e40af",
+        secondary: "#8b5cf6",
+        "secondary-dim": "#6d28d9",
+        "secondary-container": "#4c1d95",
+        tertiary: "#f43f5e",
+        "tertiary-dim": "#e11d48",
 
         // Semantic Colors
-        safe: "#10B981",
-        minor: "#F59E0B",
-        severe: "#EF4444",
-        error: "#FFB4AB",
+        safe: "#10b981", // emerald-500
+        minor: "#f59e0b", // amber-500
+        severe: "#ef4444", // red-500
+        error: "#fca5a5", // red-300
 
-        // Surface System (Deep Obsidian)
+        // Surface System (Slate Premium)
         surface: {
-          DEFAULT: "#0E1322",
-          dim: "#0E1322",
-          bright: "#343949",
-          container: "#1A1F2F",
-          "container-low": "#161B2B",
-          "container-high": "#25293A",
-          "container-highest": "#2F3445",
-          "container-lowest": "#090E1C",
+          DEFAULT: "#0f172a", // slate-900
+          dim: "#020617", // slate-950
+          bright: "#1e293b", // slate-800
+          container: "#0f172a",
+          "container-low": "#020617",
+          "container-high": "#1e293b",
+          "container-highest": "#334155", // slate-700
+          "container-lowest": "#000000",
         },
-        "on-surface": "#DEE1F7",
-        "on-surface-variant": "#BBC9CE",
-        outline: "#859398",
-        "outline-variant": "#3C494D",
+        "on-surface": "#f8fafc", // slate-50
+        "on-surface-variant": "#94a3b8", // slate-400
+        outline: "#475569", // slate-600
+        "outline-variant": "#334155", // slate-700
       },
       fontFamily: {
         sans: ["Inter", "Manrope", "sans-serif"],
@@ -56,11 +56,11 @@ export default {
         "pulse-glow": {
           "0%, 100%": {
             opacity: "1",
-            boxShadow: "0 0 20px rgba(0, 217, 255, 0.4)",
+            boxShadow: "0 0 20px rgba(66, 135, 245, 0.3)",
           },
           "50%": {
             opacity: "0.8",
-            boxShadow: "0 0 40px rgba(0, 217, 255, 0.7)",
+            boxShadow: "0 0 40px rgba(66, 135, 245, 0.6)",
           },
         },
         "slide-in": {
@@ -85,27 +85,27 @@ export default {
         },
         "glow-pulse": {
           "0%, 100%": {
-            boxShadow: "0 0 20px rgba(0, 217, 255, 0.15), 0 0 40px rgba(0, 217, 255, 0.05)",
+            boxShadow: "0 0 20px rgba(66, 135, 245, 0.15), 0 0 40px rgba(139, 92, 246, 0.05)",
           },
           "50%": {
-            boxShadow: "0 0 30px rgba(0, 217, 255, 0.3), 0 0 60px rgba(0, 217, 255, 0.1)",
+            boxShadow: "0 0 30px rgba(66, 135, 245, 0.3), 0 0 60px rgba(139, 92, 246, 0.1)",
           },
         },
       },
       backgroundImage: {
-        "gradient-primary": "linear-gradient(135deg, #00D9FF, #7C3AED)",
-        "gradient-hero": "linear-gradient(135deg, #00D9FF, #00B4D8, #7C3AED)",
-        "gradient-surface": "linear-gradient(135deg, rgba(0, 217, 255, 0.05), rgba(124, 58, 237, 0.05))",
-        "gradient-glass": "linear-gradient(135deg, rgba(52, 57, 73, 0.4), rgba(14, 19, 34, 0.8))",
+        "gradient-primary": "linear-gradient(135deg, #4287f5, #8b5cf6)",
+        "gradient-hero": "linear-gradient(135deg, #4287f5, #3b82f6, #8b5cf6)",
+        "gradient-surface": "linear-gradient(135deg, rgba(66, 135, 245, 0.05), rgba(139, 92, 246, 0.05))",
+        "gradient-glass": "linear-gradient(135deg, rgba(30, 41, 59, 0.4), rgba(15, 23, 42, 0.8))",
       },
       backdropBlur: {
         "glass": "24px",
       },
       boxShadow: {
-        "glow": "0 0 20px rgba(0, 217, 255, 0.3), 0 0 40px rgba(0, 217, 255, 0.1)",
-        "glow-lg": "0 0 30px rgba(0, 217, 255, 0.4), 0 0 60px rgba(0, 217, 255, 0.15)",
-        "glow-violet": "0 0 20px rgba(124, 58, 237, 0.3), 0 0 40px rgba(124, 58, 237, 0.1)",
-        "glow-amber": "0 0 20px rgba(249, 115, 22, 0.3), 0 0 40px rgba(249, 115, 22, 0.1)",
+        "glow": "0 0 20px rgba(66, 135, 245, 0.3), 0 0 40px rgba(66, 135, 245, 0.1)",
+        "glow-lg": "0 0 30px rgba(66, 135, 245, 0.4), 0 0 60px rgba(66, 135, 245, 0.15)",
+        "glow-violet": "0 0 20px rgba(139, 92, 246, 0.3), 0 0 40px rgba(139, 92, 246, 0.1)",
+        "glow-amber": "0 0 20px rgba(245, 158, 11, 0.3), 0 0 40px rgba(245, 158, 11, 0.1)",
       },
     },
   },

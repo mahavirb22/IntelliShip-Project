@@ -53,10 +53,11 @@ const Shipments = () => {
   }, [searchTerm, statusFilter, shipments]);
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex flex-col lg:flex-row min-h-screen bg-surface">
       <Sidebar />
 
-      <main className="flex-1 p-4 lg:p-8 lg:ml-0">
+      <main className="flex-1 w-full min-w-0 p-4 lg:p-8 overflow-y-auto">
+        <div className="max-w-7xl mx-auto mt-12 lg:mt-0">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -132,6 +133,7 @@ const Shipments = () => {
             ))}
           </div>
         )}
+        </div>
       </main>
     </div>
   );

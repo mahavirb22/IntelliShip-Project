@@ -35,7 +35,7 @@ const ShipmentDetails = () => {
     setToasts(toasts.filter((toast) => toast.id !== id));
   };
 
-  const fetchShipmentData = async () => {
+  const fetchShipmentData = React.useCallback(async () => {
     try {
       const shipmentResponse = await getShipment(id);
 
@@ -55,11 +55,11 @@ const ShipmentDetails = () => {
       setLoading(false);
       setRefreshing(false);
     }
-  };
+  }, [id]);
 
   useEffect(() => {
     fetchShipmentData();
-  }, [id]);
+  }, [fetchShipmentData]);
 
   // Poll for new events every 5 seconds
   useEffect(() => {
@@ -68,7 +68,7 @@ const ShipmentDetails = () => {
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [id]);
+  }, [fetchShipmentData]);
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -127,9 +127,9 @@ const ShipmentDetails = () => {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen">
+      <div className="flex flex-col lg:flex-row min-h-screen bg-surface">
         <Sidebar />
-        <div className="flex-1 flex items-center justify-center">
+        <div className="flex-1 flex w-full min-w-0 items-center justify-center p-4">
           <div className="text-center">
             <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary mx-auto mb-4" />
             <p className="text-on-surface-variant">Loading shipment details...</p>
@@ -140,10 +140,11 @@ const ShipmentDetails = () => {
   }
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex flex-col lg:flex-row min-h-screen bg-surface">
       <Sidebar />
 
-      <main className="flex-1 p-4 lg:p-8 lg:ml-0">
+      <main className="flex-1 w-full min-w-0 p-4 lg:p-8 overflow-y-auto">
+        <div className="max-w-4xl mx-auto mt-12 lg:mt-0">
         <ToastContainer toasts={toasts} removeToast={removeToast} />
 
         {/* Header */}
@@ -341,6 +342,7 @@ const ShipmentDetails = () => {
           <h2 className="text-2xl font-bold mb-6 font-display">Shipment Timeline</h2>
           <Timeline logs={logs} />
         </motion.div>
+        </div>
       </main>
     </div>
   );

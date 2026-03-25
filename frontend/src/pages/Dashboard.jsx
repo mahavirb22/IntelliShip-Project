@@ -122,16 +122,17 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex flex-col lg:flex-row min-h-screen bg-surface">
       <Sidebar />
 
-      <main className="flex-1 p-4 lg:p-8 lg:ml-0">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="mb-8"
-        >
+      <main className="flex-1 w-full min-w-0 p-4 lg:p-8 overflow-y-auto">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="mb-8 mt-12 lg:mt-0"
+          >
           <h1 className="text-4xl font-bold mb-2 font-display gradient-text">
             Dashboard
           </h1>
@@ -149,7 +150,7 @@ const Dashboard = () => {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-6 mb-8">
               {statCards.map((card, index) => {
                 const IconComponent = card.icon;
                 return (
@@ -160,28 +161,31 @@ const Dashboard = () => {
                     transition={{ delay: index * 0.1 }}
                     whileHover={{ 
                       y: -4,
-                      boxShadow: `0 0 30px ${card.glowColor}`,
+                      scale: 1.02,
+                      boxShadow: `0 8px 32px ${card.glowColor}`,
                     }}
-                    className="glass-card group cursor-default"
+                    className="glass-card group cursor-default relative overflow-hidden"
                   >
-                    <div className="flex items-start justify-between">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none" />
+                    
+                    <div className="flex items-start justify-between relative z-10">
                       <div>
-                        <p className="text-on-surface-variant text-sm mb-2 uppercase tracking-wider text-xs font-medium">
+                        <p className="text-on-surface-variant text-sm mb-2 uppercase tracking-wider font-medium">
                           {card.label}
                         </p>
-                        <p className="text-4xl font-bold font-display">{card.value}</p>
+                        <p className="text-4xl font-bold font-display tracking-tight text-on-surface">{card.value}</p>
                       </div>
-                      <div className={`${card.color} p-3 rounded-xl transition-all duration-300 group-hover:scale-110`}>
+                      <div className={`${card.color} p-3 rounded-2xl transition-all duration-300 group-hover:scale-110 shadow-lg`}>
                         <IconComponent size={24} />
                       </div>
                     </div>
-                    <div className="mt-4 pt-3 border-t border-outline-variant/10">
-                      <div className="flex items-center gap-2 text-sm text-on-surface-variant/60">
-                        <div className="relative">
-                          <Activity size={14} className="text-primary" />
-                          <div className="absolute inset-0 animate-ping rounded-full bg-primary/30" style={{ animationDuration: '2s' }} />
+                    <div className="mt-5 pt-4 border-t border-outline-variant/20 relative z-10">
+                      <div className="flex items-center gap-2 text-xs text-on-surface-variant/80 font-medium">
+                        <div className="relative flex h-2 w-2">
+                          <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${card.color.split(' ')[0].replace('/10', '')}`}></span>
+                          <span className={`relative inline-flex rounded-full h-2 w-2 ${card.color.split(' ')[0].replace('/10', '')}`}></span>
                         </div>
-                        <span>Live backend metrics</span>
+                        <span>Live real-time feed</span>
                       </div>
                     </div>
                   </motion.div>
@@ -255,6 +259,7 @@ const Dashboard = () => {
             </motion.div>
           </>
         )}
+        </div>
       </main>
     </div>
   );

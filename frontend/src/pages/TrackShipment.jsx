@@ -185,7 +185,7 @@ const TrackShipment = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-surface">
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary mx-auto mb-4" />
           <p className="text-on-surface-variant">Loading tracking information...</p>
@@ -195,7 +195,7 @@ const TrackShipment = () => {
   }
 
   return (
-    <div className="min-h-screen p-4">
+    <div className="min-h-screen p-4 lg:p-8 bg-surface">
       <ToastContainer toasts={toasts} removeToast={removeToast} />
       <ComplaintModal
         isOpen={showComplaintModal}

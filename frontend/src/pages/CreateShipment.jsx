@@ -107,10 +107,11 @@ IntelliShip Team`;
   };
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex flex-col lg:flex-row min-h-screen bg-surface">
       <Sidebar />
 
-      <main className="flex-1 p-4 lg:p-8 lg:ml-0">
+      <main className="flex-1 w-full min-w-0 p-4 lg:p-8 overflow-y-auto">
+        <div className="max-w-4xl mx-auto mt-12 lg:mt-0">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -162,13 +163,13 @@ IntelliShip Team`;
                     name="fragility_level"
                     value={formData.fragility_level}
                     onChange={handleChange}
-                    className="input-field"
+                    className="input-field appearance-none"
                     required
                   >
-                    <option value="Low">Low - Durable items</option>
-                    <option value="Medium">Medium - Standard care</option>
-                    <option value="High">High - Fragile items</option>
-                    <option value="Very High">
+                    <option value="Low" className="bg-surface-container">Low - Durable items</option>
+                    <option value="Medium" className="bg-surface-container">Medium - Standard care</option>
+                    <option value="High" className="bg-surface-container">High - Fragile items</option>
+                    <option value="Very High" className="bg-surface-container">
                       Very High - Extremely delicate
                     </option>
                   </select>
@@ -223,7 +224,7 @@ IntelliShip Team`;
                   </p>
                 </div>
 
-                <div className="flex gap-4 pt-4">
+                <div className="flex flex-col sm:flex-row gap-4 pt-4">
                   <button
                     type="submit"
                     disabled={isSubmitting}
@@ -244,7 +245,7 @@ IntelliShip Team`;
                   <button
                     type="button"
                     onClick={() => navigate("/dashboard")}
-                    className="btn-secondary px-8"
+                    className="btn-secondary px-8 w-full sm:w-auto"
                   >
                     Cancel
                   </button>
@@ -374,7 +375,7 @@ IntelliShip Team`;
                 </ul>
               </div>
 
-              <div className="flex gap-4">
+              <div className="flex flex-col sm:flex-row gap-4">
                 <button
                   onClick={() => navigate("/dashboard/shipments")}
                   className="btn-primary flex-1"
@@ -394,7 +395,7 @@ IntelliShip Team`;
                       customer_phone: "",
                     });
                   }}
-                  className="btn-secondary px-8"
+                  className="btn-secondary px-8 w-full sm:w-auto"
                 >
                   Create Another
                 </button>
@@ -402,6 +403,7 @@ IntelliShip Team`;
             </motion.div>
           )}
         </AnimatePresence>
+        </div>
       </main>
     </div>
   );

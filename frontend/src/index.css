@@ -9,49 +9,49 @@
     @apply bg-surface text-on-surface;
     font-family: "Inter", "Manrope", sans-serif;
     min-height: 100vh;
-    background-color: #0E1322;
+    background-color: #0f172a;
     background-image: 
-      radial-gradient(ellipse at 20% 50%, rgba(0, 217, 255, 0.04) 0%, transparent 60%),
-      radial-gradient(ellipse at 80% 20%, rgba(124, 58, 237, 0.04) 0%, transparent 60%),
-      radial-gradient(ellipse at 50% 80%, rgba(0, 217, 255, 0.02) 0%, transparent 60%);
+      radial-gradient(ellipse at 20% 50%, rgba(66, 135, 245, 0.05) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 20%, rgba(139, 92, 246, 0.05) 0%, transparent 60%),
+      radial-gradient(ellipse at 50% 80%, rgba(66, 135, 245, 0.03) 0%, transparent 60%);
     background-attachment: fixed;
   }
 }
 
 @layer components {
-  /* === Glass Cards (Cybernetic Vanguard) === */
+  /* === Glass Cards (Premium Modern) === */
   .glass-card {
-    background: rgba(26, 31, 47, 0.6);
+    background: rgba(30, 41, 59, 0.5); /* Slate 800 with 50% opacity */
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
-    border: 1px solid rgba(0, 217, 255, 0.1);
-    border-radius: 12px;
+    border: 1px solid rgba(66, 135, 245, 0.1);
+    border-radius: 16px; /* 16px rounded corners */
     padding: 1.5rem;
     box-shadow: 
-      0 8px 32px rgba(0, 0, 0, 0.3),
+      0 4px 24px rgba(0, 0, 0, 0.2),
       inset 0 1px 1px 0 rgba(255, 255, 255, 0.06);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .glass-card:hover {
-    border-color: rgba(0, 217, 255, 0.25);
+    border-color: rgba(66, 135, 245, 0.25);
     box-shadow: 
-      0 12px 40px rgba(0, 0, 0, 0.4),
-      0 0 30px rgba(0, 217, 255, 0.08),
-      inset 0 1px 1px 0 rgba(255, 255, 255, 0.08);
-    transform: translateY(-2px);
+      0 8px 32px rgba(0, 0, 0, 0.3),
+      0 0 24px rgba(66, 135, 245, 0.08),
+      inset 0 1px 1px 0 rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px) scale(1.01);
   }
 
   /* === Primary Button (Gradient Pill) === */
   .btn-primary {
-    background: linear-gradient(135deg, #00D9FF, #00B4D8, #7C3AED);
+    background: linear-gradient(135deg, #4287f5, #3b82f6, #8b5cf6);
     background-size: 200% auto;
     color: white;
     font-weight: 600;
     padding: 0.75rem 1.5rem;
     border-radius: 9999px;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 20px rgba(0, 217, 255, 0.3);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 16px rgba(66, 135, 245, 0.25);
     position: relative;
     overflow: hidden;
   }
@@ -74,8 +74,8 @@
 
   .btn-primary:hover {
     background-position: right center;
-    transform: scale(1.03) translateY(-1px);
-    box-shadow: 0 8px 30px rgba(0, 217, 255, 0.4), 0 0 20px rgba(0, 217, 255, 0.15);
+    transform: scale(1.02) translateY(-1px);
+    box-shadow: 0 8px 24px rgba(66, 135, 245, 0.35), 0 0 16px rgba(139, 92, 246, 0.2);
   }
 
   .btn-primary:hover::before {
@@ -84,21 +84,21 @@
 
   /* === Secondary Button (Ghost) === */
   .btn-secondary {
-    background: rgba(255, 255, 255, 0.04);
-    color: #DEE1F7;
+    background: rgba(255, 255, 255, 0.03);
+    color: #f8fafc;
     font-weight: 600;
     padding: 0.75rem 1.5rem;
     border-radius: 9999px;
-    border: 1px solid rgba(0, 217, 255, 0.2);
+    border: 1px solid rgba(66, 135, 245, 0.2);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     backdrop-filter: blur(8px);
   }
 
   .btn-secondary:hover {
-    background: rgba(0, 217, 255, 0.08);
-    border-color: rgba(0, 217, 255, 0.4);
-    transform: scale(1.03);
-    box-shadow: 0 0 20px rgba(0, 217, 255, 0.1);
+    background: rgba(66, 135, 245, 0.08);
+    border-color: rgba(66, 135, 245, 0.4);
+    transform: scale(1.02);
+    box-shadow: 0 0 16px rgba(66, 135, 245, 0.15);
   }
 
   /* === Status Badges === */
@@ -107,45 +107,45 @@
     backdrop-filter: blur(8px);
   }
 
-  /* === Input Fields (Cybernetic) === */
+  /* === Input Fields (Modern) === */
   .input-field {
     width: 100%;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid transparent;
-    border-bottom-color: rgba(0, 217, 255, 0.15);
-    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom-color: rgba(66, 135, 245, 0.2);
+    border-radius: 12px;
     padding: 0.85rem 1rem;
-    color: #DEE1F7;
+    color: #f8fafc;
     font-size: 0.95rem;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     backdrop-filter: blur(8px);
   }
 
   .input-field::placeholder {
-    color: rgba(187, 201, 206, 0.5);
+    color: rgba(148, 163, 184, 0.5); /* slate-400 with opacity */
   }
 
   .input-field:hover {
-    background: rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.05);
   }
 
   .input-field:focus {
     outline: none;
     background: rgba(255, 255, 255, 0.06);
-    border-color: rgba(0, 217, 255, 0.3);
-    box-shadow: 0 0 0 3px rgba(0, 217, 255, 0.08), 0 4px 16px rgba(0, 217, 255, 0.1);
+    border-color: rgba(66, 135, 245, 0.4);
+    box-shadow: 0 0 0 3px rgba(66, 135, 245, 0.1), 0 4px 16px rgba(66, 135, 245, 0.1);
   }
 
   /* === Gradient Text Utility === */
   .gradient-text {
-    background: linear-gradient(135deg, #00D9FF, #7C3AED);
+    background: linear-gradient(135deg, #4287f5, #8b5cf6);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
   .gradient-text-hero {
-    background: linear-gradient(135deg, #00D9FF, #00B4D8, #7C3AED, #D2BBFF);
+    background: linear-gradient(135deg, #4287f5, #3b82f6, #8b5cf6, #c084fc);
     background-size: 200% auto;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -154,22 +154,22 @@
   }
 }
 
-/* === Custom Scrollbar (Cybernetic) === */
+/* === Custom Scrollbar (Premium) === */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(14, 19, 34, 0.8);
+  background: rgba(15, 23, 42, 0.8);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
   background: linear-gradient(
     180deg,
-    rgba(0, 217, 255, 0.4),
-    rgba(124, 58, 237, 0.4)
+    rgba(66, 135, 245, 0.3),
+    rgba(139, 92, 246, 0.3)
   );
   border-radius: 4px;
   transition: all 0.3s ease;
@@ -178,18 +178,18 @@
 ::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(
     180deg,
-    rgba(0, 217, 255, 0.7),
-    rgba(124, 58, 237, 0.7)
+    rgba(66, 135, 245, 0.6),
+    rgba(139, 92, 246, 0.6)
   );
 }
 
 /* === Pulse Glow Animation === */
 @keyframes pulse-glow {
   0%, 100% {
-    box-shadow: 0 0 20px rgba(0, 217, 255, 0.4);
+    boxShadow: 0 0 20px rgba(66, 135, 245, 0.3);
   }
   50% {
-    box-shadow: 0 0 40px rgba(0, 217, 255, 0.7);
+    boxShadow: 0 0 40px rgba(66, 135, 245, 0.6);
   }
 }
 
@@ -244,7 +244,7 @@
   background: linear-gradient(
     to right,
     rgba(255, 255, 255, 0) 0%,
-    rgba(0, 217, 255, 0.1) 50%,
+    rgba(66, 135, 245, 0.1) 50%,
     rgba(255, 255, 255, 0) 100%
   );
   background-size: 1000px 100%;
@@ -254,23 +254,23 @@
 /* === Glow Effects === */
 .glow {
   box-shadow:
-    0 0 20px rgba(0, 217, 255, 0.3),
-    0 0 40px rgba(0, 217, 255, 0.15),
-    0 0 60px rgba(0, 217, 255, 0.05);
+    0 0 20px rgba(66, 135, 245, 0.25),
+    0 0 40px rgba(66, 135, 245, 0.15),
+    0 0 60px rgba(66, 135, 245, 0.05);
 }
 
 .glow-violet {
   box-shadow:
-    0 0 20px rgba(124, 58, 237, 0.3),
-    0 0 40px rgba(124, 58, 237, 0.15),
-    0 0 60px rgba(124, 58, 237, 0.05);
+    0 0 20px rgba(139, 92, 246, 0.25),
+    0 0 40px rgba(139, 92, 246, 0.15),
+    0 0 60px rgba(139, 92, 246, 0.05);
 }
 
 .glow-amber {
   box-shadow:
-    0 0 20px rgba(249, 115, 22, 0.3),
-    0 0 40px rgba(249, 115, 22, 0.15),
-    0 0 60px rgba(249, 115, 22, 0.05);
+    0 0 20px rgba(245, 158, 11, 0.25),
+    0 0 40px rgba(245, 158, 11, 0.15),
+    0 0 60px rgba(245, 158, 11, 0.05);
 }
 
 /* === Live Pulse Indicator === */
@@ -296,12 +296,12 @@
 
 /* === Selection === */
 ::selection {
-  background-color: rgba(0, 217, 255, 0.25);
+  background-color: rgba(66, 135, 245, 0.25);
   color: white;
 }
 
 ::-moz-selection {
-  background-color: rgba(0, 217, 255, 0.25);
+  background-color: rgba(66, 135, 245, 0.25);
   color: white;
 }
 
