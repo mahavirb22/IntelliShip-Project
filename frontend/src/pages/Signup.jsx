@@ -102,7 +102,7 @@ const Signup = () => {
           }}
         >
           <img 
-            src="https://images.unsplash.com/photo-1580674684081-77673ce8fce?q=80&w=1000&auto=format&fit=crop" 
+            src="https://images.pexels.com/photos/4481259/pexels-photo-4481259.jpeg?auto=compress&cs=tinysrgb&w=800" 
             alt="Logistics Technology" 
             className="w-full h-full object-cover scale-105"
           />

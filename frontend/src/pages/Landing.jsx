@@ -22,16 +22,16 @@ const Landing = () => {
           <a href="#" className="hover:text-primary transition-colors">About</a>
         </div>
         
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 sm:gap-4">
           <button 
             onClick={() => navigate("/login")}
-            className="px-6 py-2.5 rounded-full border border-outline-variant text-sm font-medium hover:border-primary hover:text-primary transition-all"
+            className="whitespace-nowrap px-4 sm:px-6 py-2 sm:py-2.5 rounded-full border border-outline-variant text-xs sm:text-sm font-medium hover:border-primary hover:text-primary transition-all"
           >
             Sign In
           </button>
           <button 
             onClick={() => navigate("/signup")}
-            className="px-6 py-2.5 rounded-full bg-primary text-white text-sm font-medium hover:bg-primary-dim transition-all shadow-[0_4px_14px_rgba(212,175,55,0.4)]"
+            className="whitespace-nowrap px-4 sm:px-6 py-2 sm:py-2.5 rounded-full bg-primary text-white text-xs sm:text-sm font-medium hover:bg-primary-dim transition-all shadow-[0_4px_14px_rgba(212,175,55,0.4)]"
           >
             Get Started
           </button>
@@ -130,7 +130,7 @@ const Landing = () => {
             }}
           >
             <img 
-              src="https://images.unsplash.com/photo-1580674684081-77673ce8fce?q=80&w=1000&auto=format&fit=crop" 
+              src="https://images.pexels.com/photos/6169033/pexels-photo-6169033.jpeg?auto=compress&cs=tinysrgb&w=800" 
               alt="Logistics Professional" 
               className="w-full h-full object-cover scale-105"
             />

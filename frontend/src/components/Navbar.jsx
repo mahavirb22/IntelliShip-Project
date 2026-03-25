@@ -1,12 +1,17 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Package, Bell, User, ChevronDown, LogOut } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { clearAuthState } from "../services/authStorage";
+import { clearAuthState, getAuthUser } from "../services/authStorage";
 import { logout } from "../services/api";
 
 const Navbar = ({ onMenuToggle }) => {
   const [profileOpen, setProfileOpen] = useState(false);
+  const navigate = useNavigate();
+  const user = getAuthUser();
+  const userName = user?.name || "User";
+  const userEmail = user?.email || "";
+  const userInitials = userName.substring(0, 2).toUpperCase();
 
   const handleLogout = async () => {
     try {
@@ -15,7 +20,7 @@ const Navbar = ({ onMenuToggle }) => {
       // Proceed with client side logout
     }
     clearAuthState();
-    window.location.href = "/login";
+    navigate("/login");
   };
 
   return (
@@ -48,7 +53,7 @@ const Navbar = ({ onMenuToggle }) => {
               className="flex items-center gap-2 p-1 pl-2 pr-3 bg-surface hover:bg-gray-50 border border-gray-100 rounded-full transition-colors"
             >
               <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-primary to-secondary flex items-center justify-center text-white font-medium shadow-sm">
-                US
+                {userInitials}
               </div>
               <ChevronDown size={14} className="text-on-surface-variant" />
             </button>
@@ -71,8 +76,8 @@ const Navbar = ({ onMenuToggle }) => {
                     className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-[0_10px_30px_rgba(0,0,0,0.1)] border border-gray-100 py-1 z-50 overflow-hidden"
                   >
                     <div className="px-4 py-3 border-b border-gray-50">
-                      <p className="text-sm font-medium text-on-surface">Admin User</p>
-                      <p className="text-xs text-on-surface-variant">admin@intelliship.ai</p>
+                      <p className="text-sm font-medium text-on-surface">{userName}</p>
+                      <p className="text-xs text-on-surface-variant">{userEmail}</p>
                     </div>
                     <button
                       onClick={handleLogout}
