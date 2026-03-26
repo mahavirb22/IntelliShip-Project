@@ -5,6 +5,7 @@ const cors = require("cors");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 const morgan = require("morgan");
+const compression = require("compression");
 const { cleanEnv, str, port, num } = require("envalid");
 const errorHandler = require("./middleware/errorHandler");
 const sanitizeInputs = require("./middleware/sanitizeInputs");
@@ -44,6 +45,7 @@ const corsOptions = {
 
 app.use(helmet());
 app.use(cors(corsOptions));
+app.use(compression());
 app.use(
   rateLimit({
     windowMs: 15 * 60 * 1000,

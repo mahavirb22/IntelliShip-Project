@@ -4,6 +4,7 @@ const Event = require("../models/Event");
 const Shipment = require("../models/Shipment");
 const { getRiskPrediction } = require("../utils/mlClient");
 const { EVENT_SEVERITY } = require("../utils/statusEnums");
+const { invalidateShipmentCache } = require("../utils/shipmentCache");
 
 const HIGH_EVENT_DAMAGE_THRESHOLD = Number(
   process.env.HIGH_EVENT_DAMAGE_THRESHOLD || 3,
@@ -183,7 +184,8 @@ const toCondition = (severity, riskScore) => {
 router.post("/", async (req, res) => {
   try {
     const {
-      shipment_id,
+      device_id,
+      shipment_id: legacyShipmentId,
       event_type,
       severity,
       intensity,
@@ -194,20 +196,46 @@ router.post("/", async (req, res) => {
       totalHigh,
     } = req.body;
 
-    if (!shipment_id) {
+    const normalizedDeviceId = String(device_id || "").trim();
+    const normalizedLegacyShipmentId = String(legacyShipmentId || "").trim();
+
+    if (!normalizedDeviceId && !normalizedLegacyShipmentId) {
       return res.status(400).json({
         success: false,
-        error: "Missing required field: shipment_id",
+        error:
+          "Missing required field: device_id (or shipment_id for legacy clients)",
       });
     }
 
-    const shipment = await Shipment.findOne({ shipment_id });
+    let shipment = null;
+
+    if (normalizedDeviceId) {
+      shipment = await Shipment.findOne({
+        device_id: normalizedDeviceId,
+        active: true,
+      });
+
+      if (!shipment) {
+        return res.status(404).json({
+          success: false,
+          error: "No active shipment found for this device",
+        });
+      }
+    } else if (normalizedLegacyShipmentId) {
+      shipment = await Shipment.findOne({
+        shipment_id: normalizedLegacyShipmentId,
+      });
+    }
+
     if (!shipment) {
       return res.status(404).json({
         success: false,
         error: "Shipment not found",
       });
     }
+
+    const resolvedShipmentId = shipment.shipment_id;
+    const resolvedShipmentRef = shipment._id;
 
     const numericIntensity = Number(
       intensity ?? Math.max(Number(avgHigh || 0), Number(risingEdges || 0) * 4),
@@ -251,7 +279,7 @@ router.post("/", async (req, res) => {
       computedSeverity,
     });
 
-    const lastEvent = await Event.findOne({ shipment_id })
+    const lastEvent = await Event.findOne({ shipment_id: resolvedShipmentId })
       .sort({ timestamp: -1 })
       .lean();
 
@@ -296,7 +324,8 @@ router.post("/", async (req, res) => {
         : Math.min(1, numericIntensity / 100);
 
     const event = new Event({
-      shipment_id,
+      shipment_ref: resolvedShipmentRef,
+      shipment_id: resolvedShipmentId,
       event_type: event_type || "VIBRATION",
       severity: finalSeverity,
       intensity: numericIntensity,
@@ -348,6 +377,7 @@ router.post("/", async (req, res) => {
     });
 
     await shipment.save();
+    invalidateShipmentCache(resolvedShipmentId);
 
     res.status(201).json({
       success: true,

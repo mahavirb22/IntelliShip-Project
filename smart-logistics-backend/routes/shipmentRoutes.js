@@ -8,6 +8,12 @@ const {
   SHIPMENT_LIFECYCLE,
   isValidTransition,
 } = require("../utils/statusEnums");
+const {
+  buildShipmentCacheKey,
+  getShipmentCache,
+  setShipmentCache,
+  invalidateShipmentCache,
+} = require("../utils/shipmentCache");
 
 const generateShipmentId = () => {
   const timestamp = Date.now().toString().slice(-8);
@@ -39,10 +45,37 @@ const canAccessShipment = (shipment, user) => {
   );
 };
 
+const buildTrackingResponse = (shipment, events) => ({
+  success: true,
+  data: shipment,
+  events,
+});
+
 // Create Shipment (Protected - Seller/Admin)
 router.post("/", auth, authorize("seller", "admin"), async (req, res) => {
   try {
     const shipment_id = req.body.shipment_id || generateShipmentId();
+    const device_id = String(req.body.device_id || "").trim();
+
+    if (!device_id) {
+      return res.status(400).json({
+        success: false,
+        error: "device_id is required",
+      });
+    }
+
+    const existingActiveShipment = await Shipment.findOne({
+      device_id,
+      active: true,
+    }).lean();
+
+    if (existingActiveShipment) {
+      return res.status(409).json({
+        success: false,
+        error: "This device is already assigned to an active shipment",
+      });
+    }
+
     const baseUrl =
       process.env.FRONTEND_BASE_URL ||
       "https://intelli-ship-project-frontend.vercel.app";
@@ -50,9 +83,11 @@ router.post("/", auth, authorize("seller", "admin"), async (req, res) => {
     const shipment = new Shipment({
       ...req.body,
       shipment_id,
+      device_id,
       status: "CREATED",
       condition: "SAFE",
       monitoring_started: false,
+      active: true,
       tracking_link: toTrackingPath(baseUrl, shipment_id),
       statusHistory: [
         {
@@ -74,6 +109,7 @@ router.post("/", auth, authorize("seller", "admin"), async (req, res) => {
     });
 
     await shipment.save();
+    invalidateShipmentCache(shipment.shipment_id);
 
     res.status(201).json({
       success: true,
@@ -131,6 +167,10 @@ router.patch(
         shipment.condition = "DAMAGED";
       }
 
+      if (status === "DELIVERED") {
+        shipment.active = false;
+      }
+
       shipment.logs.push({
         message: `Lifecycle updated to ${status}`,
         type: "MANUAL",
@@ -138,6 +178,7 @@ router.patch(
       });
 
       await shipment.save();
+      invalidateShipmentCache(shipment.shipment_id);
 
       res.json({
         success: true,
@@ -193,6 +234,7 @@ router.post(
       }
 
       await shipment.save();
+      invalidateShipmentCache(shipment.shipment_id);
 
       res.json({
         success: true,
@@ -246,6 +288,7 @@ router.post(
       });
 
       await shipment.save();
+      invalidateShipmentCache(shipment.shipment_id);
 
       res.status(201).json({
         success: true,
@@ -266,9 +309,11 @@ router.get("/", auth, authorize("seller", "admin"), async (req, res) => {
   try {
     const query = req.user.role === "admin" ? {} : { seller_id: req.user._id };
 
-    const shipments = await Shipment.find(query).sort({
-      created_at: -1,
-    });
+    const shipments = await Shipment.find(query)
+      .sort({
+        created_at: -1,
+      })
+      .lean();
 
     res.json({
       success: true,
@@ -294,9 +339,18 @@ router.post("/track", async (req, res) => {
       });
     }
 
+    const cacheKey = buildShipmentCacheKey({
+      shipmentId: shipment_id,
+      mobile,
+    });
+    const cached = getShipmentCache(cacheKey);
+    if (cached) {
+      return res.json(cached);
+    }
+
     const shipment = await Shipment.findOne({
       shipment_id: shipment_id.trim(),
-    });
+    }).lean();
 
     if (!shipment) {
       return res.status(404).json({
@@ -319,15 +373,14 @@ router.post("/track", async (req, res) => {
     }
 
     const events = await Event.find({ shipment_id: shipment.shipment_id })
-      .sort({ timestamp: -1 })
-      .limit(100)
+      .sort({ createdAt: -1 })
+      .limit(10)
       .lean();
 
-    res.json({
-      success: true,
-      data: shipment,
-      events,
-    });
+    const payload = buildTrackingResponse(shipment, events);
+    setShipmentCache(cacheKey, payload);
+
+    res.json(payload);
   } catch (err) {
     res.status(500).json({
       success: false,
@@ -339,7 +392,15 @@ router.post("/track", async (req, res) => {
 // Get Shipment by ID (Public fallback for QR links)
 router.get("/:id", async (req, res) => {
   try {
-    const shipment = await Shipment.findOne({ shipment_id: req.params.id });
+    const cacheKey = buildShipmentCacheKey({ shipmentId: req.params.id });
+    const cached = getShipmentCache(cacheKey);
+    if (cached) {
+      return res.json(cached);
+    }
+
+    const shipment = await Shipment.findOne({
+      shipment_id: req.params.id,
+    }).lean();
 
     if (!shipment) {
       return res.status(404).json({
@@ -349,15 +410,14 @@ router.get("/:id", async (req, res) => {
     }
 
     const events = await Event.find({ shipment_id: shipment.shipment_id })
-      .sort({ timestamp: -1 })
-      .limit(100)
+      .sort({ createdAt: -1 })
+      .limit(10)
       .lean();
 
-    res.json({
-      success: true,
-      data: shipment,
-      events,
-    });
+    const payload = buildTrackingResponse(shipment, events);
+    setShipmentCache(cacheKey, payload);
+
+    res.json(payload);
   } catch (err) {
     res.status(500).json({
       success: false,

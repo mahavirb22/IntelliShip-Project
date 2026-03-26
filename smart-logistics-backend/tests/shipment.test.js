@@ -40,6 +40,7 @@ describe("Shipment routes", () => {
       .set("Authorization", `Bearer ${token}`)
       .send({
         product_name: "Glass Vase",
+        device_id: "ESP32_TEST_001",
         fragility_level: "High",
         customer_name: "John Customer",
         customer_email: "john@example.com",

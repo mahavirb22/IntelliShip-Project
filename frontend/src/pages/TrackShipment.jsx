@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   ArrowLeft,
   Package,
@@ -17,6 +18,7 @@ import ComplaintModal from "../components/ComplaintModal";
 import ToastContainer from "../components/ToastNotification";
 import {
   createComplaint,
+  getEvents,
   getShipment,
   trackShipmentSecure,
 } from "../services/api";
@@ -25,6 +27,7 @@ const TrackShipment = () => {
   const { shipment_id } = useParams();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const prefilledId = shipment_id || searchParams.get("shipmentId") || "";
 
@@ -69,13 +72,47 @@ const TrackShipment = () => {
   }, [logs, shipment]);
 
   const fetchPublicTracking = async (id) => {
-    const response = await getShipment(id);
-    const shipmentData = response.data?.data || response.data;
+    const [shipmentResponse, eventsResponse] = await Promise.all([
+      queryClient.fetchQuery({
+        queryKey: ["shipment", id],
+        queryFn: () => getShipment(id),
+        staleTime: 10000,
+        gcTime: 30000,
+      }),
+      queryClient.fetchQuery({
+        queryKey: ["shipment-events", id],
+        queryFn: () => getEvents(id),
+        staleTime: 10000,
+        gcTime: 30000,
+      }),
+    ]);
+
+    const shipmentData = shipmentResponse.data?.data || shipmentResponse.data;
+    const eventsData =
+      eventsResponse.data?.data || eventsResponse.data?.events || [];
 
     setShipment(shipmentData);
-    setEvents(response.data?.events || []);
+    setEvents(Array.isArray(eventsData) ? eventsData : []);
     setLogs(Array.isArray(shipmentData?.logs) ? shipmentData.logs : []);
   };
+
+  const { data: prefilledTrackingData, isError: isPrefilledError } = useQuery({
+    queryKey: ["prefilled-track", prefilledId],
+    queryFn: async () => {
+      const [shipmentResponse, eventsResponse] = await Promise.all([
+        getShipment(prefilledId),
+        getEvents(prefilledId),
+      ]);
+
+      return {
+        shipment: shipmentResponse.data?.data || shipmentResponse.data,
+        events: eventsResponse.data?.data || eventsResponse.data?.events || [],
+      };
+    },
+    enabled: Boolean(prefilledId),
+    staleTime: 10000,
+    gcTime: 30000,
+  });
 
   const fetchTrackingData = async () => {
     if (!form.shipment_id.trim()) {
@@ -131,18 +168,27 @@ const TrackShipment = () => {
       return;
     }
 
-    const load = async () => {
-      try {
-        await fetchPublicTracking(prefilledId);
-      } catch {
-        addToast("Unable to load prefilled shipment", "error");
-      } finally {
-        setLoading(false);
-      }
-    };
+    if (isPrefilledError) {
+      addToast("Unable to load prefilled shipment", "error");
+      setLoading(false);
+      return;
+    }
 
-    load();
-  }, [prefilledId]);
+    if (prefilledTrackingData?.shipment) {
+      setShipment(prefilledTrackingData.shipment);
+      setEvents(
+        Array.isArray(prefilledTrackingData.events)
+          ? prefilledTrackingData.events
+          : [],
+      );
+      setLogs(
+        Array.isArray(prefilledTrackingData.shipment.logs)
+          ? prefilledTrackingData.shipment.logs
+          : [],
+      );
+      setLoading(false);
+    }
+  }, [prefilledId, prefilledTrackingData, isPrefilledError]);
 
   useEffect(() => {
     if (!shipment?.shipment_id) {

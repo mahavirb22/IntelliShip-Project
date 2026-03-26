@@ -19,7 +19,14 @@ const shipmentLogSchema = new mongoose.Schema(
 );
 
 const shipmentSchema = new mongoose.Schema({
-  shipment_id: { type: String, required: true, unique: true, trim: true },
+  shipment_id: {
+    type: String,
+    required: true,
+    unique: true,
+    trim: true,
+    index: true,
+  },
+  device_id: { type: String, required: true, trim: true },
   product_name: { type: String, required: true, trim: true },
   fragility_level: {
     type: String,
@@ -68,6 +75,7 @@ const shipmentSchema = new mongoose.Schema({
     default: [],
   },
   monitoring_started: { type: Boolean, default: false },
+  active: { type: Boolean, default: true },
   highEventCount: { type: Number, default: 0, min: 0 },
   latestRiskScore: { type: Number, default: 0, min: 0, max: 1 },
   logs: { type: [shipmentLogSchema], default: [] },
@@ -77,5 +85,10 @@ const shipmentSchema = new mongoose.Schema({
 
 // Index for seller queries
 shipmentSchema.index({ seller_id: 1, created_at: -1 });
+// Ensure one device can only be mapped to one active shipment at a time.
+shipmentSchema.index(
+  { device_id: 1 },
+  { unique: true, partialFilterExpression: { active: true } },
+);
 
 module.exports = mongoose.model("Shipment", shipmentSchema);

@@ -3,6 +3,7 @@ const router = express.Router();
 const Shipment = require("../models/Shipment");
 const auth = require("../middleware/auth");
 const authorize = require("../middleware/authorize");
+const { invalidateShipmentCache } = require("../utils/shipmentCache");
 
 router.post("/manual", auth, authorize("seller", "admin"), async (req, res) => {
   try {
@@ -40,6 +41,7 @@ router.post("/manual", auth, authorize("seller", "admin"), async (req, res) => {
     });
 
     await shipment.save();
+    invalidateShipmentCache(shipment.shipment_id);
 
     res.status(201).json({
       success: true,

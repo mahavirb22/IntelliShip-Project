@@ -6,6 +6,7 @@ let mongod;
 let app;
 let token;
 let shipmentId;
+let deviceId;
 
 beforeAll(async () => {
   process.env.NODE_ENV = "test";
@@ -34,6 +35,7 @@ beforeAll(async () => {
     .set("Authorization", `Bearer ${token}`)
     .send({
       product_name: "Electronic Device",
+      device_id: "ESP32_EVENT_001",
       fragility_level: "High",
       customer_name: "Jane Customer",
       customer_email: "jane@example.com",
@@ -41,6 +43,7 @@ beforeAll(async () => {
     });
 
   shipmentId = createShipment.body.shipment.shipment_id;
+  deviceId = createShipment.body.shipment.device_id;
 
   await request(app)
     .post(`/api/shipments/${shipmentId}/start-monitoring`)
@@ -56,14 +59,14 @@ afterAll(async () => {
 describe("Event ingestion", () => {
   it("should mark shipment damaged after multiple high events", async () => {
     await request(app).post("/api/events").send({
-      shipment_id: shipmentId,
+      device_id: deviceId,
       intensity: 90,
       risingEdges: 20,
       avgHigh: 120,
     });
 
     const second = await request(app).post("/api/events").send({
-      shipment_id: shipmentId,
+      device_id: deviceId,
       intensity: 92,
       risingEdges: 22,
       avgHigh: 130,
@@ -72,5 +75,17 @@ describe("Event ingestion", () => {
     expect(second.status).toBe(201);
     expect(second.body.shipment_status).toBe("DAMAGED");
     expect(second.body.shipment_condition).toBe("DAMAGED");
+  });
+
+  it("should still support legacy shipment_id payload", async () => {
+    const response = await request(app).post("/api/events").send({
+      shipment_id: shipmentId,
+      intensity: 95,
+      risingEdges: 18,
+      avgHigh: 110,
+    });
+
+    expect([200, 201]).toContain(response.status);
+    expect(response.body.success).toBe(true);
   });
 });

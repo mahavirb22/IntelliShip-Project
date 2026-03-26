@@ -12,6 +12,7 @@
     "test:run": "vitest run"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.90.5",
     "axios": "^1.13.6",
     "framer-motion": "^12.38.0",
     "jspdf": "^4.2.1",

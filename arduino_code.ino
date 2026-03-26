@@ -21,8 +21,8 @@ const char* password = "mahavir2006";
 // ================== SERVER ==================
 const char* serverURL = "https://intelliship-project.onrender.com/api/events";
 
-// 🔴 PUT REAL SHIPMENT ID
-String shipmentID = "SHIP253722256RTOU";
+// 🔴 PUT REAL DEVICE ID
+String deviceID = "ESP32_001";
 
 // ================== FEATURE VARIABLES ==================
 int pulseCount = 0;
@@ -137,7 +137,7 @@ void loop() {
     Serial.println("Severity: " + batchSeverity);
 
     sendEventToCloud(
-      shipmentID,
+      deviceID,
       batchSeverity,
       batchMaxIntensity,
       avgBatch,
@@ -194,7 +194,7 @@ String classifySeverity(float intensity) {
 
 // ================== SEND ==================
 void sendEventToCloud(
-  String shipment_id,
+  String device_id,
   String severity,
   float maxIntensity,
   float avgIntensity,
@@ -210,7 +210,7 @@ void sendEventToCloud(
     https.addHeader("Content-Type", "application/json");
 
     String json = "{";
-    json += "\"shipment_id\":\"" + shipment_id + "\",";
+    json += "\"device_id\":\"" + device_id + "\",";
     json += "\"severity\":\"" + severity + "\",";
     json += "\"intensity\":" + String(maxIntensity) + ",";
     json += "\"avgHigh\":" + String(avgIntensity) + ",";
