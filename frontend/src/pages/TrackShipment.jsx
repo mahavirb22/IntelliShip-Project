@@ -22,6 +22,10 @@ import {
   getShipment,
   trackShipmentSecure,
 } from "../services/api";
+import {
+  getHighestSeverityFromEvents,
+  getShipmentHealthStatus,
+} from "../utils/shipmentHealth";
 
 const TrackShipment = () => {
   const { shipment_id } = useParams();
@@ -240,22 +244,11 @@ const TrackShipment = () => {
     }
   };
 
-  const getPriority = (severity) => {
-    if (severity === "HIGH") return 3;
-    if (severity === "MEDIUM") return 2;
-    return 1;
-  };
-
-  const getHighestSeverity = (eventList) => {
-    if (!Array.isArray(eventList) || eventList.length === 0) {
-      return "LOW";
-    }
-
-    return eventList.reduce((highest, event) => {
-      const current = String(event?.severity || "LOW").toUpperCase();
-      return getPriority(current) > getPriority(highest) ? current : highest;
-    }, "LOW");
-  };
+  const resolvedHealthStatus = getShipmentHealthStatus({
+    shipment,
+    events,
+    logs,
+  });
 
   const handleDownloadReport = () => {
     if (!shipment?.shipment_id) {
@@ -269,8 +262,8 @@ const TrackShipment = () => {
       const generatedAt = new Date().toLocaleString();
       const reportShipmentId = shipment.shipment_id;
       const totalEvents = Array.isArray(events) ? events.length : 0;
-      const highestSeverity = getHighestSeverity(events);
-      const latestStatus = shipment?.status || "N/A";
+      const highestSeverity = getHighestSeverityFromEvents(events);
+      const latestStatus = resolvedHealthStatus;
       const safeMobile = form.mobile.trim() || "Not provided";
 
       let cursorY = 52;
@@ -302,8 +295,7 @@ const TrackShipment = () => {
       const shipmentDetails = [
         ["Shipment ID", reportShipmentId],
         ["Customer Mobile", safeMobile],
-        ["Current Status", shipment?.status || "N/A"],
-        ["Condition", shipment?.condition || "N/A"],
+        ["Current Status", resolvedHealthStatus],
       ];
 
       shipmentDetails.forEach(([label, value]) => {
@@ -472,7 +464,7 @@ const TrackShipment = () => {
         {!shipment ? null : (
           <>
             <div
-              className={`glass-card mb-8 text-center py-10 ${shipment?.condition === "DAMAGED" ? "animate-pulse-glow border-severe/50" : ""}`}
+              className={`glass-card mb-8 text-center py-10 ${resolvedHealthStatus === "DAMAGED" ? "animate-pulse-glow border-severe/50" : ""}`}
             >
               <Package size={60} className="mx-auto mb-4 text-primary" />
               <h2 className="text-3xl font-bold mb-2 font-display">
@@ -483,8 +475,7 @@ const TrackShipment = () => {
               </p>
 
               <div className="flex flex-wrap justify-center gap-3 mb-4">
-                <StatusBadge status={shipment?.status} size="lg" animate />
-                <StatusBadge status={shipment?.condition} size="lg" animate />
+                <StatusBadge status={resolvedHealthStatus} size="lg" animate />
               </div>
 
               <div className="flex flex-wrap justify-center gap-3">

@@ -15,6 +15,7 @@ import {
   startMonitoring,
   updateShipmentStatus,
 } from "../services/api";
+import { getShipmentHealthStatus } from "../utils/shipmentHealth";
 
 const ShipmentDetails = () => {
   const { id } = useParams();
@@ -139,6 +140,12 @@ const ShipmentDetails = () => {
     }
   };
 
+  const resolvedHealthStatus = getShipmentHealthStatus({
+    shipment,
+    events,
+    logs,
+  });
+
   if (isLoading && !shipment) {
     return (
       <div className="min-h-screen bg-surface flex flex-col">
@@ -217,7 +224,7 @@ const ShipmentDetails = () => {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.1 }}
               className={`glass-card mb-8 text-center py-12 ${
-                shipment?.status === "DAMAGED"
+                resolvedHealthStatus === "DAMAGED"
                   ? "animate-pulse-glow border-severe/50"
                   : ""
               }`}
@@ -228,10 +235,7 @@ const ShipmentDetails = () => {
                   Current Status
                 </h2>
               </div>
-              <StatusBadge status={shipment?.status} size="lg" animate />
-              <div className="mt-4 flex justify-center">
-                <StatusBadge status={shipment?.condition} size="md" />
-              </div>
+              <StatusBadge status={resolvedHealthStatus} size="lg" animate />
 
               {!shipment?.monitoring_started && (
                 <button
@@ -245,7 +249,7 @@ const ShipmentDetails = () => {
                 </button>
               )}
 
-              {shipment?.status === "DAMAGED" && (
+              {resolvedHealthStatus === "DAMAGED" && (
                 <motion.p
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
