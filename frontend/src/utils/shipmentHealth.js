@@ -37,6 +37,18 @@ export const getShipmentHealthStatus = ({
   events = [],
   logs = [],
 }) => {
+  const verificationStatus = String(
+    shipment?.verificationStatus || "",
+  ).toUpperCase();
+
+  if (verificationStatus === "SAFE") {
+    return "SAFE";
+  }
+
+  if (verificationStatus === "DAMAGED") {
+    return "DAMAGED";
+  }
+
   const highestSeverity = getHighestSeverityFromEvents(events);
   if (highestSeverity === "HIGH") {
     return "DAMAGED";

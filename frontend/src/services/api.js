@@ -56,6 +56,15 @@ export const getAllShipments = () => API.get("/api/shipments");
 export const updateShipmentStatus = (shipmentId, data) =>
   API.patch(`/api/shipments/${shipmentId}/status`, data);
 
+export const markShipmentDelivered = (shipmentId, data = {}) =>
+  API.patch(`/api/shipments/${shipmentId}/delivered`, data);
+
+export const verifyShipmentSafe = (shipmentId) =>
+  API.patch(`/api/shipments/${shipmentId}/verify-safe`);
+
+export const verifyShipmentDamaged = (shipmentId) =>
+  API.patch(`/api/shipments/${shipmentId}/verify-damaged`);
+
 export const startMonitoring = (shipmentId) =>
   API.post(`/api/shipments/${shipmentId}/start-monitoring`);
 

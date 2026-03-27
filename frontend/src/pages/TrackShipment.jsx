@@ -21,6 +21,8 @@ import {
   getEvents,
   getShipment,
   trackShipmentSecure,
+  verifyShipmentDamaged,
+  verifyShipmentSafe,
 } from "../services/api";
 import {
   getHighestSeverityFromEvents,
@@ -236,11 +238,35 @@ const TrackShipment = () => {
         shipment_id: shipment?.shipment_id || form.shipment_id,
         complaint_text: description,
       });
-      addToast("Complaint submitted successfully");
+      const verifyResponse = await verifyShipmentDamaged(
+        shipment?.shipment_id || form.shipment_id,
+      );
+      const updatedShipment = verifyResponse.data?.data || verifyResponse.data;
+      setShipment(updatedShipment);
+      setLogs(Array.isArray(updatedShipment?.logs) ? updatedShipment.logs : []);
+
+      addToast("Shipment completed with damage", "error");
       setShowComplaintModal(false);
     } catch {
-      addToast("Failed to submit complaint", "error");
+      addToast("Failed to complete damage verification", "error");
       throw new Error("Complaint failed");
+    }
+  };
+
+  const handleVerifySafe = async () => {
+    try {
+      const response = await verifyShipmentSafe(
+        shipment?.shipment_id || form.shipment_id,
+      );
+      const updatedShipment = response.data?.data || response.data;
+      setShipment(updatedShipment);
+      setLogs(Array.isArray(updatedShipment?.logs) ? updatedShipment.logs : []);
+      addToast("Shipment completed successfully");
+    } catch (error) {
+      addToast(
+        error.response?.data?.message || "Unable to complete verification",
+        "error",
+      );
     }
   };
 
@@ -370,9 +396,10 @@ const TrackShipment = () => {
     }
   };
 
-  const hasHighSeverityEvent = events.some(
-    (event) => event.severity === "HIGH",
-  );
+  const verificationStatus = String(shipment?.verificationStatus || "PENDING");
+  const isDelivered =
+    String(shipment?.status || "").toUpperCase() === "DELIVERED";
+  const canVerifyCondition = isDelivered && verificationStatus === "PENDING";
 
   if (loading) {
     return (
@@ -499,15 +526,27 @@ const TrackShipment = () => {
                 </button>
               </div>
 
-              {hasHighSeverityEvent && (
-                <div className="mt-6">
-                  <button
-                    onClick={() => setShowComplaintModal(true)}
-                    className="btn-primary bg-severe hover:bg-red-600 flex items-center gap-2 mx-auto"
-                  >
-                    <AlertTriangle size={20} />
-                    File Complaint
-                  </button>
+              {canVerifyCondition && (
+                <div className="mt-6 max-w-xl mx-auto w-full rounded-2xl border border-amber-200 bg-amber-50/60 p-5">
+                  <p className="text-sm font-medium text-amber-800 mb-3">
+                    Verify Product Condition
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                    <button
+                      onClick={handleVerifySafe}
+                      className="btn-primary bg-safe hover:bg-emerald-600 flex items-center justify-center gap-2"
+                    >
+                      <ShieldCheck size={18} />
+                      Product Safe
+                    </button>
+                    <button
+                      onClick={() => setShowComplaintModal(true)}
+                      className="btn-primary bg-severe hover:bg-red-600 flex items-center justify-center gap-2"
+                    >
+                      <AlertTriangle size={18} />
+                      Report Damage
+                    </button>
+                  </div>
                 </div>
               )}
             </div>

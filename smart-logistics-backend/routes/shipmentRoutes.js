@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Shipment = require("../models/Shipment");
 const Event = require("../models/Event");
+const Complaint = require("../models/Complaint");
 const auth = require("../middleware/auth");
 const authorize = require("../middleware/authorize");
 const {
@@ -139,6 +140,14 @@ router.patch(
         });
       }
 
+      if (["DELIVERED", "VERIFIED", "COMPLETED"].includes(status)) {
+        return res.status(400).json({
+          success: false,
+          message:
+            "Use delivered/verification endpoints for post-delivery lifecycle updates",
+        });
+      }
+
       const shipment = await Shipment.findOne({ shipment_id: req.params.id });
       if (!shipment) {
         return res.status(404).json({
@@ -163,14 +172,6 @@ router.patch(
 
       appendStatusHistory(shipment, status, location);
 
-      if (status === "DAMAGED") {
-        shipment.condition = "DAMAGED";
-      }
-
-      if (status === "DELIVERED") {
-        shipment.active = false;
-      }
-
       shipment.logs.push({
         message: `Lifecycle updated to ${status}`,
         type: "MANUAL",
@@ -192,6 +193,180 @@ router.patch(
     }
   },
 );
+
+// Mark shipment delivered (Protected - Seller/Admin)
+router.patch(
+  "/:id/delivered",
+  auth,
+  authorize("seller", "admin"),
+  async (req, res) => {
+    try {
+      const shipment = await Shipment.findOne({ shipment_id: req.params.id });
+
+      if (!shipment) {
+        return res.status(404).json({
+          success: false,
+          message: "Shipment not found",
+        });
+      }
+
+      if (!canAccessShipment(shipment, req.user)) {
+        return res.status(403).json({
+          success: false,
+          message: "Access denied",
+        });
+      }
+
+      if (!isValidTransition(shipment.status, "DELIVERED")) {
+        return res.status(400).json({
+          success: false,
+          message: `Invalid status transition from ${shipment.status} to DELIVERED`,
+        });
+      }
+
+      appendStatusHistory(shipment, "DELIVERED", req.body?.location);
+      shipment.deliveredAt = new Date();
+      shipment.verificationStatus = "PENDING";
+      shipment.logs.push({
+        message: "Shipment marked as DELIVERED. Awaiting customer verification",
+        type: "MANUAL",
+        timestamp: new Date(),
+      });
+
+      await shipment.save();
+      invalidateShipmentCache(shipment.shipment_id);
+
+      return res.json({
+        success: true,
+        data: shipment,
+      });
+    } catch (err) {
+      return res.status(500).json({
+        success: false,
+        error: err.message,
+      });
+    }
+  },
+);
+
+const canVerifyShipment = (shipment) => {
+  if (!shipment.deliveredAt || shipment.status !== "DELIVERED") {
+    return "Shipment can be verified only after delivery";
+  }
+
+  if (shipment.verificationStatus !== "PENDING") {
+    return `Shipment already verified as ${shipment.verificationStatus}`;
+  }
+
+  return null;
+};
+
+const releaseDeviceAndComplete = (shipment, verificationStatus) => {
+  shipment.verificationStatus = verificationStatus;
+  shipment.condition = verificationStatus;
+
+  appendStatusHistory(shipment, "VERIFIED");
+  appendStatusHistory(shipment, "COMPLETED");
+
+  shipment.active = false;
+  shipment.device_id = null;
+  shipment.monitoring_started = false;
+};
+
+// Customer verifies product as safe
+router.patch("/:id/verify-safe", async (req, res) => {
+  try {
+    const shipment = await Shipment.findOne({ shipment_id: req.params.id });
+
+    if (!shipment) {
+      return res.status(404).json({
+        success: false,
+        message: "Shipment not found",
+      });
+    }
+
+    const verificationError = canVerifyShipment(shipment);
+    if (verificationError) {
+      return res.status(400).json({
+        success: false,
+        message: verificationError,
+      });
+    }
+
+    releaseDeviceAndComplete(shipment, "SAFE");
+    shipment.logs.push({
+      message: "Customer verified shipment as SAFE. Shipment completed",
+      type: "MANUAL",
+      timestamp: new Date(),
+    });
+
+    await shipment.save();
+    invalidateShipmentCache(shipment.shipment_id);
+
+    return res.json({
+      success: true,
+      data: shipment,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      error: err.message,
+    });
+  }
+});
+
+// Customer verifies product as damaged after complaint submission
+router.patch("/:id/verify-damaged", async (req, res) => {
+  try {
+    const shipment = await Shipment.findOne({ shipment_id: req.params.id });
+
+    if (!shipment) {
+      return res.status(404).json({
+        success: false,
+        message: "Shipment not found",
+      });
+    }
+
+    const verificationError = canVerifyShipment(shipment);
+    if (verificationError) {
+      return res.status(400).json({
+        success: false,
+        message: verificationError,
+      });
+    }
+
+    const complaint = await Complaint.findOne({
+      shipment_id: shipment.shipment_id,
+    }).lean();
+
+    if (!complaint) {
+      return res.status(400).json({
+        success: false,
+        message: "Complaint is required before marking shipment as damaged",
+      });
+    }
+
+    releaseDeviceAndComplete(shipment, "DAMAGED");
+    shipment.logs.push({
+      message: "Customer verified shipment as DAMAGED. Shipment completed",
+      type: "MANUAL",
+      timestamp: new Date(),
+    });
+
+    await shipment.save();
+    invalidateShipmentCache(shipment.shipment_id);
+
+    return res.json({
+      success: true,
+      data: shipment,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      error: err.message,
+    });
+  }
+});
 
 // Start Monitoring (Protected - Seller/Admin)
 router.post(

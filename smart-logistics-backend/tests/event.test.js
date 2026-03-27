@@ -57,7 +57,7 @@ afterAll(async () => {
 });
 
 describe("Event ingestion", () => {
-  it("should mark shipment damaged after multiple high events", async () => {
+  it("should keep lifecycle in transit while marking condition damaged after repeated high events", async () => {
     await request(app).post("/api/events").send({
       device_id: deviceId,
       intensity: 90,
@@ -73,7 +73,7 @@ describe("Event ingestion", () => {
     });
 
     expect(second.status).toBe(201);
-    expect(second.body.shipment_status).toBe("DAMAGED");
+    expect(second.body.shipment_status).toBe("IN_TRANSIT");
     expect(second.body.shipment_condition).toBe("DAMAGED");
   });
 

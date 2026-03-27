@@ -352,22 +352,8 @@ router.post("/", async (req, res) => {
     shipment.latestRiskScore = normalizedRiskScore;
     shipment.condition = toCondition(finalSeverity, normalizedRiskScore);
 
-    const currentStatus = shipment.status;
-    const canBeDamaged = ["PACKED", "IN_TRANSIT", "OUT_FOR_DELIVERY"].includes(
-      currentStatus,
-    );
-
-    if (
-      canBeDamaged &&
-      Number(shipment.highEventCount || 0) >= HIGH_EVENT_DAMAGE_THRESHOLD
-    ) {
-      shipment.status = "DAMAGED";
+    if (Number(shipment.highEventCount || 0) >= HIGH_EVENT_DAMAGE_THRESHOLD) {
       shipment.condition = "DAMAGED";
-      shipment.statusHistory.push({
-        status: "DAMAGED",
-        timestamp: new Date(),
-        location: req.body.location,
-      });
     }
 
     shipment.logs.push({

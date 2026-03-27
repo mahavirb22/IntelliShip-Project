@@ -52,4 +52,51 @@ describe("Shipment routes", () => {
     expect(response.body.shipment.status).toBe("CREATED");
     expect(response.body.shipment.statusHistory.length).toBe(1);
   });
+
+  it("should release device only after post-delivery safe verification", async () => {
+    const createResponse = await request(app)
+      .post("/api/shipments")
+      .set("Authorization", `Bearer ${token}`)
+      .send({
+        product_name: "Laptop",
+        device_id: "ESP32_TEST_002",
+        fragility_level: "High",
+        customer_name: "Alice Customer",
+        customer_email: "alice@example.com",
+        customer_phone: "9123456781",
+      });
+
+    expect(createResponse.status).toBe(201);
+    const shipmentId = createResponse.body.shipment.shipment_id;
+
+    await request(app)
+      .post(`/api/shipments/${shipmentId}/start-monitoring`)
+      .set("Authorization", `Bearer ${token}`)
+      .send({});
+
+    await request(app)
+      .patch(`/api/shipments/${shipmentId}/status`)
+      .set("Authorization", `Bearer ${token}`)
+      .send({ status: "OUT_FOR_DELIVERY" });
+
+    const deliveredResponse = await request(app)
+      .patch(`/api/shipments/${shipmentId}/delivered`)
+      .set("Authorization", `Bearer ${token}`)
+      .send({});
+
+    expect(deliveredResponse.status).toBe(200);
+    expect(deliveredResponse.body.data.status).toBe("DELIVERED");
+    expect(deliveredResponse.body.data.active).toBe(true);
+    expect(deliveredResponse.body.data.device_id).toBe("ESP32_TEST_002");
+
+    const verifyResponse = await request(app)
+      .patch(`/api/shipments/${shipmentId}/verify-safe`)
+      .send({});
+
+    expect(verifyResponse.status).toBe(200);
+    expect(verifyResponse.body.data.status).toBe("COMPLETED");
+    expect(verifyResponse.body.data.verificationStatus).toBe("SAFE");
+    expect(verifyResponse.body.data.active).toBe(false);
+    expect(verifyResponse.body.data.device_id).toBeNull();
+  });
 });

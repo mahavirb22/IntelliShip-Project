@@ -12,6 +12,7 @@ import {
   addManualLog,
   getEvents,
   getShipment,
+  markShipmentDelivered,
   startMonitoring,
   updateShipmentStatus,
 } from "../services/api";
@@ -129,7 +130,11 @@ const ShipmentDetails = () => {
 
   const submitStatusUpdate = async () => {
     try {
-      await updateShipmentStatus(id, { status: nextStatus });
+      if (nextStatus === "DELIVERED") {
+        await markShipmentDelivered(id);
+      } else {
+        await updateShipmentStatus(id, { status: nextStatus });
+      }
       addToast(`Shipment updated to ${nextStatus}`);
       await refetch();
     } catch (error) {
@@ -145,6 +150,8 @@ const ShipmentDetails = () => {
     events,
     logs,
   });
+  const verificationStatus = shipment?.verificationStatus || "PENDING";
+  const isDeviceReleased = Boolean(!shipment?.active && !shipment?.device_id);
 
   if (isLoading && !shipment) {
     return (
@@ -236,6 +243,10 @@ const ShipmentDetails = () => {
                 </h2>
               </div>
               <StatusBadge status={resolvedHealthStatus} size="lg" animate />
+              <div className="mt-4 flex flex-wrap justify-center gap-3">
+                <StatusBadge status={shipment?.status} size="sm" />
+                <StatusBadge status={verificationStatus} size="sm" />
+              </div>
 
               {!shipment?.monitoring_started && (
                 <button
@@ -280,7 +291,6 @@ const ShipmentDetails = () => {
                   <option value="IN_TRANSIT">IN_TRANSIT</option>
                   <option value="OUT_FOR_DELIVERY">OUT_FOR_DELIVERY</option>
                   <option value="DELIVERED">DELIVERED</option>
-                  <option value="DAMAGED">DAMAGED</option>
                 </select>
                 <button onClick={submitStatusUpdate} className="btn-primary">
                   Update Status
@@ -370,6 +380,32 @@ const ShipmentDetails = () => {
                   </p>
                   <p className="font-medium text-sm text-primary truncate">
                     {window.location.origin}/track/{id}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-on-surface-variant text-sm">
+                    Delivered At
+                  </p>
+                  <p className="font-medium text-lg">
+                    {shipment?.deliveredAt
+                      ? new Date(shipment.deliveredAt).toLocaleString()
+                      : "Not Delivered Yet"}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-on-surface-variant text-sm">
+                    Verification Status
+                  </p>
+                  <div className="mt-1">
+                    <StatusBadge status={verificationStatus} size="sm" />
+                  </div>
+                </div>
+                <div>
+                  <p className="text-on-surface-variant text-sm">
+                    Device Released
+                  </p>
+                  <p className="font-medium text-lg">
+                    {isDeviceReleased ? "Yes" : "No"}
                   </p>
                 </div>
               </div>

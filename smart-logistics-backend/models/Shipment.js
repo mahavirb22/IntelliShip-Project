@@ -4,6 +4,8 @@ const {
   SHIPMENT_CONDITION,
 } = require("../utils/statusEnums");
 
+const VERIFICATION_STATUS = ["PENDING", "SAFE", "DAMAGED"];
+
 const shipmentLogSchema = new mongoose.Schema(
   {
     message: { type: String, required: true, trim: true },
@@ -26,7 +28,14 @@ const shipmentSchema = new mongoose.Schema({
     trim: true,
     index: true,
   },
-  device_id: { type: String, required: true, trim: true },
+  device_id: {
+    type: String,
+    trim: true,
+    default: null,
+    required() {
+      return this.active;
+    },
+  },
   product_name: { type: String, required: true, trim: true },
   fragility_level: {
     type: String,
@@ -53,6 +62,12 @@ const shipmentSchema = new mongoose.Schema({
     default: "SAFE",
     enum: SHIPMENT_CONDITION,
   },
+  verificationStatus: {
+    type: String,
+    enum: VERIFICATION_STATUS,
+    default: "PENDING",
+  },
+  deliveredAt: { type: Date, default: null },
   statusHistory: {
     type: [
       {
