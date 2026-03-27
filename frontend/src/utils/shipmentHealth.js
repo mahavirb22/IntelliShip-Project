@@ -51,18 +51,22 @@ export const getShipmentHealthStatus = ({
 
   const highestSeverity = getHighestSeverityFromEvents(events);
   if (highestSeverity === "HIGH") {
-    return "DAMAGED";
+    return "HIGH_RISK";
   }
 
   if (hasHighSignalInLogs(logs)) {
-    return "DAMAGED";
+    return "HIGH_RISK";
   }
 
   const shipmentStatus = String(shipment?.status || "").toUpperCase();
   const shipmentCondition = String(shipment?.condition || "").toUpperCase();
 
+  if (shipmentCondition === "RISK" || shipmentCondition === "AT_RISK") {
+    return "RISK";
+  }
+
   if (shipmentStatus === "DAMAGED" || shipmentCondition === "DAMAGED") {
-    return "DAMAGED";
+    return "HIGH_RISK";
   }
 
   return "SAFE";

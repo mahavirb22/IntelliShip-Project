@@ -6,9 +6,6 @@ const { getRiskPrediction } = require("../utils/mlClient");
 const { EVENT_SEVERITY } = require("../utils/statusEnums");
 const { invalidateShipmentCache } = require("../utils/shipmentCache");
 
-const HIGH_EVENT_DAMAGE_THRESHOLD = Number(
-  process.env.HIGH_EVENT_DAMAGE_THRESHOLD || 3,
-);
 const LOW_REPEAT_WINDOW_SECONDS = Number(
   process.env.LOW_REPEAT_WINDOW_SECONDS || 20,
 );
@@ -166,18 +163,6 @@ const eventMessageMap = {
   LOW: "Low vibration detected",
   MEDIUM: "Medium vibration detected",
   HIGH: "High vibration detected",
-};
-
-const toCondition = (severity, riskScore) => {
-  if (severity === "HIGH" || riskScore >= 0.8) {
-    return "DAMAGED";
-  }
-
-  if (severity === "MEDIUM" || riskScore >= 0.45) {
-    return "AT_RISK";
-  }
-
-  return "SAFE";
 };
 
 // ESP32 sends event here
@@ -347,14 +332,16 @@ router.post("/", async (req, res) => {
 
     if (finalSeverity === "HIGH") {
       shipment.highEventCount = Number(shipment.highEventCount || 0) + 1;
+      shipment.condition = "DAMAGED";
+
+      // Record warning escalation in lifecycle history without finalizing shipment.
+      shipment.statusHistory.push({
+        status: shipment.status,
+        timestamp: new Date(),
+      });
     }
 
     shipment.latestRiskScore = normalizedRiskScore;
-    shipment.condition = toCondition(finalSeverity, normalizedRiskScore);
-
-    if (Number(shipment.highEventCount || 0) >= HIGH_EVENT_DAMAGE_THRESHOLD) {
-      shipment.condition = "DAMAGED";
-    }
 
     shipment.logs.push({
       message: eventMessageMap[finalSeverity],

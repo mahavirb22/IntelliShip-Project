@@ -7,7 +7,7 @@ const calculateShipmentStatus = (events = [], monitoringStarted = false) => {
     ["severe", "critical"].includes(eventType),
   );
   if (hasSevere) {
-    return "DAMAGED";
+    return "WARNING";
   }
 
   const hasMinor = normalizedEvents.some((eventType) =>

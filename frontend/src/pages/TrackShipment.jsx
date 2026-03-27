@@ -491,7 +491,7 @@ const TrackShipment = () => {
         {!shipment ? null : (
           <>
             <div
-              className={`glass-card mb-8 text-center py-10 ${resolvedHealthStatus === "DAMAGED" ? "animate-pulse-glow border-severe/50" : ""}`}
+              className={`glass-card mb-8 text-center py-10 ${["DAMAGED", "HIGH_RISK"].includes(resolvedHealthStatus) ? "animate-pulse-glow border-amber-400/50" : ""}`}
             >
               <Package size={60} className="mx-auto mb-4 text-primary" />
               <h2 className="text-3xl font-bold mb-2 font-display">
@@ -504,6 +504,13 @@ const TrackShipment = () => {
               <div className="flex flex-wrap justify-center gap-3 mb-4">
                 <StatusBadge status={resolvedHealthStatus} size="lg" animate />
               </div>
+
+              {resolvedHealthStatus === "HIGH_RISK" && (
+                <p className="text-amber-700 font-medium mb-4">
+                  ⚠ High Risk Detected during transit. Final condition will be
+                  confirmed after delivery.
+                </p>
+              )}
 
               <div className="flex flex-wrap justify-center gap-3">
                 <button

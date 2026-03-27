@@ -231,8 +231,8 @@ const ShipmentDetails = () => {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.1 }}
               className={`glass-card mb-8 text-center py-12 ${
-                resolvedHealthStatus === "DAMAGED"
-                  ? "animate-pulse-glow border-severe/50"
+                ["DAMAGED", "HIGH_RISK"].includes(resolvedHealthStatus)
+                  ? "animate-pulse-glow border-amber-400/50"
                   : ""
               }`}
             >
@@ -260,14 +260,16 @@ const ShipmentDetails = () => {
                 </button>
               )}
 
-              {resolvedHealthStatus === "DAMAGED" && (
+              {["DAMAGED", "HIGH_RISK"].includes(resolvedHealthStatus) && (
                 <motion.p
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.5 }}
-                  className="mt-4 text-severe font-medium"
+                  className="mt-4 text-amber-700 font-medium"
                 >
-                  ⚠️ Immediate attention required!
+                  {resolvedHealthStatus === "DAMAGED"
+                    ? "Final customer verification marked this shipment as damaged."
+                    : "⚠ High Risk Detected during transit. Final condition pending customer verification."}
                 </motion.p>
               )}
             </motion.div>

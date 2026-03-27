@@ -262,6 +262,14 @@ const canVerifyShipment = (shipment) => {
 };
 
 const releaseDeviceAndComplete = (shipment, verificationStatus) => {
+  if (shipment.status !== "DELIVERED") {
+    return "Shipment can be verified only after delivery";
+  }
+
+  if (!["SAFE", "DAMAGED"].includes(verificationStatus)) {
+    return "Invalid verification status for completion";
+  }
+
   shipment.verificationStatus = verificationStatus;
   shipment.condition = verificationStatus;
 
@@ -271,6 +279,8 @@ const releaseDeviceAndComplete = (shipment, verificationStatus) => {
   shipment.active = false;
   shipment.device_id = null;
   shipment.monitoring_started = false;
+
+  return null;
 };
 
 // Customer verifies product as safe
@@ -293,7 +303,14 @@ router.patch("/:id/verify-safe", async (req, res) => {
       });
     }
 
-    releaseDeviceAndComplete(shipment, "SAFE");
+    const releaseError = releaseDeviceAndComplete(shipment, "SAFE");
+    if (releaseError) {
+      return res.status(400).json({
+        success: false,
+        message: releaseError,
+      });
+    }
+
     shipment.logs.push({
       message: "Customer verified shipment as SAFE. Shipment completed",
       type: "MANUAL",
@@ -346,7 +363,14 @@ router.patch("/:id/verify-damaged", async (req, res) => {
       });
     }
 
-    releaseDeviceAndComplete(shipment, "DAMAGED");
+    const releaseError = releaseDeviceAndComplete(shipment, "DAMAGED");
+    if (releaseError) {
+      return res.status(400).json({
+        success: false,
+        message: releaseError,
+      });
+    }
+
     shipment.logs.push({
       message: "Customer verified shipment as DAMAGED. Shipment completed",
       type: "MANUAL",

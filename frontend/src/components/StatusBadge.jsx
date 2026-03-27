@@ -63,12 +63,20 @@ const StatusBadge = ({
           icon: AlertTriangle,
           label: "Warning",
         };
+      case "high_risk":
+      case "high risk":
+        return {
+          color: "bg-amber-100 text-amber-700 border-amber-300",
+          icon: AlertTriangle,
+          label: "⚠ High Risk Detected",
+          glow: false,
+        };
       case "damaged":
       case "severe":
         return {
           color: "bg-severe/10 text-red-600 border-severe/20",
           icon: AlertCircle,
-          label: "Damaged",
+          label: "Damaged (Verified)",
           glow: false,
         };
       case "delivered":
