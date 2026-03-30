@@ -15,6 +15,10 @@ const {
   setShipmentCache,
   invalidateShipmentCache,
 } = require("../utils/shipmentCache");
+const {
+  sendShipmentCreatedEmail,
+  isValidEmail,
+} = require("../utils/emailService");
 
 const generateShipmentId = () => {
   const timestamp = Date.now().toString().slice(-8);
@@ -111,6 +115,29 @@ router.post("/", auth, authorize("seller", "admin"), async (req, res) => {
 
     await shipment.save();
     invalidateShipmentCache(shipment.shipment_id);
+
+    if (shipment.customer_email && isValidEmail(shipment.customer_email)) {
+      const trackingUrl = `${baseUrl.replace(/\/$/, "")}/track/${shipment.shipment_id}`;
+
+      try {
+        await sendShipmentCreatedEmail({
+          email: shipment.customer_email,
+          name: shipment.customer_name,
+          shipmentId: shipment.shipment_id,
+          trackingUrl,
+        });
+      } catch (emailError) {
+        // Email errors are intentionally non-blocking for shipment creation.
+        console.error(
+          "Failed to send shipment creation email:",
+          emailError?.message || emailError,
+        );
+      }
+    } else if (shipment.customer_email) {
+      console.warn(
+        `Skipping shipment creation email due to invalid customer email: ${shipment.customer_email}`,
+      );
+    }
 
     res.status(201).json({
       success: true,
