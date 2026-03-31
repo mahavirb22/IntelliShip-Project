@@ -2,107 +2,58 @@ const { Resend } = require("resend");
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-// ✅ Always redirect to homepage
-const FRONTEND_URL = "https://intelli-ship-project-frontend.vercel.app/track";
-
-const sendShipmentCreatedEmail = async ({ email, name, shipmentId }) => {
+const sendShipmentCreatedEmail = async ({
+  email,
+  name,
+  shipmentId,
+  trackingUrl,
+}) => {
   try {
     if (!email) return;
 
-    console.log("📨 Sending email to:", email);
+    console.log("Sending email to:", email);
 
     const response = await resend.emails.send({
       from: "onboarding@resend.dev",
       to: email,
       subject: "📦 Your IntelliShip Shipment is Confirmed!",
       html: `
-        <div style="font-family: 'Segoe UI', Arial, sans-serif; background:#f8f9fb; padding:40px 0;">
-          
-          <table width="100%" cellspacing="0" cellpadding="0">
+        <div style="margin:0;padding:18px 0;background:#f5f2e7;font-family:Arial,sans-serif;color:#283244;">
+          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:690px;margin:0 auto;background:#f8f8f8;border:1px solid #e6dcc2;border-radius:14px;overflow:hidden;">
             <tr>
-              <td align="center">
+              <td style="padding:24px 30px;background:linear-gradient(135deg,#d3b049 0%,#d8bd61 100%);">
+                <h1 style="margin:0;font-size:40px;line-height:1.15;color:#0f2442;">IntelliShip Shipment Confirmation</h1>
+                <p style="margin:12px 0 0;font-size:31px;line-height:1.2;color:#1b2b44;">Your order is now under intelligent monitoring.</p>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:28px 30px 30px;">
+                <p style="margin:0 0 18px;font-size:32px;line-height:1.35;color:#283244;">Hi ${name || "Customer"},</p>
 
-                <!-- Main Card -->
-                <table width="520" style="background:#ffffff; border-radius:14px; padding:30px; box-shadow:0 10px 30px rgba(0,0,0,0.08);">
+                <p style="margin:0 0 26px;font-size:36px;line-height:1.45;color:#283244;">
+                  Thank you for choosing IntelliShip. Your shipment is now under intelligent monitoring using our IoT system.
+                </p>
 
-                  <!-- Header -->
-                  <tr>
-                    <td align="center">
-                      <h2 style="margin:0; color:#d4af37;">📦 IntelliShip</h2>
-                      <p style="color:#777; margin-top:5px;">Smart Shipment Monitoring</p>
-                    </td>
-                  </tr>
+                <div style="margin:0 0 26px;padding:18px 20px;background:#eee8d3;border:1px solid #d4b867;border-radius:12px;">
+                  <p style="margin:0 0 8px;font-size:20px;letter-spacing:2px;color:#876510;text-transform:uppercase;">Shipment ID</p>
+                  <p style="margin:0;font-size:44px;line-height:1.2;font-weight:700;color:#7a5a09;">${shipmentId}</p>
+                </div>
 
-                  <!-- Greeting -->
-                  <tr>
-                    <td>
-                      <p style="font-size:16px;">Hello <b>${name || "Customer"}</b>,</p>
+                <p style="margin:0 0 12px;font-size:38px;line-height:1.35;color:#505b70;">Basic shipment info:</p>
+                <ul style="margin:0 0 30px;padding-left:26px;font-size:35px;line-height:1.65;color:#3f4b62;">
+                  <li>Status: Created and queued for transit updates</li>
+                  <li>Monitoring: Real-time IoT safety tracking enabled</li>
+                  <li>Tracking: Available instantly from the link below</li>
+                </ul>
 
-                      <p style="color:#555; line-height:1.6;">
-                        Your shipment has been successfully created and is now being actively monitored using IoT sensors.
-                      </p>
-                    </td>
-                  </tr>
+                <a href="${trackingUrl}"
+                   style="display:inline-block;padding:18px 30px;background:#d0ac2f;color:#142946;text-decoration:none;border-radius:12px;font-size:35px;font-weight:700;">
+                   Track Shipment
+                </a>
 
-                  <!-- Shipment Info -->
-                  <tr>
-                    <td style="padding:15px 0;">
-                      <div style="
-                        background:#f4f6f8;
-                        padding:15px;
-                        border-radius:10px;
-                        text-align:center;
-                      ">
-                        <p style="margin:0; font-size:13px; color:#777;">Shipment ID</p>
-                        <p style="margin:5px 0 0; font-size:18px; font-weight:bold;">
-                          ${shipmentId}
-                        </p>
-                      </div>
-                    </td>
-                  </tr>
-
-                  <!-- Button -->
-                  <tr>
-                    <td align="center" style="padding:20px 0;">
-                      <a href="${FRONTEND_URL}" target="_blank"
-                        style="
-                          display:inline-block;
-                          padding:14px 26px;
-                          background:linear-gradient(135deg,#d4af37,#c89b2f);
-                          color:#fff;
-                          text-decoration:none;
-                          border-radius:10px;
-                          font-weight:600;
-                          font-size:15px;
-                          box-shadow:0 4px 12px rgba(212,175,55,0.4);
-                        ">
-                        Track Shipment →
-                      </a>
-                    </td>
-                  </tr>
-
-                  <!-- Divider -->
-                  <tr>
-                    <td>
-                      <hr style="border:none; border-top:1px solid #eee;">
-                    </td>
-                  </tr>
-
-                  <!-- Footer -->
-                  <tr>
-                    <td style="text-align:center;">
-                      <p style="color:#777; font-size:13px;">
-                        Real-time tracking • Smart alerts • Safe delivery
-                      </p>
-
-                      <p style="margin-top:10px;">
-                        Thank you for choosing <b>IntelliShip</b> 🚀
-                      </p>
-                    </td>
-                  </tr>
-
-                </table>
-
+                <p style="margin:28px 0 0;font-size:34px;line-height:1.6;color:#616d82;">
+                  We will continuously monitor your shipment and keep the tracking timeline updated for complete visibility and product safety.
+                </p>
               </td>
             </tr>
           </table>
@@ -110,14 +61,10 @@ const sendShipmentCreatedEmail = async ({ email, name, shipmentId }) => {
       `,
     });
 
-    if (response?.error) {
-      console.error("❌ Email sending failed:", response.error.message);
-      return;
-    }
-
-    console.log("✅ Email sent successfully:", response?.id);
+    console.log("Email sent:", response);
+    console.log("Email sent successfully");
   } catch (error) {
-    console.error("❌ Email sending failed:", error.message);
+    console.error("Email sending failed:", error.message);
   }
 };
 
