@@ -114,12 +114,16 @@ router.post("/", auth, authorize("seller", "admin"), async (req, res) => {
     invalidateShipmentCache(shipment.shipment_id);
 
     try {
-      const trackingUrl = `${process.env.FRONTEND_BASE_URL}/track/${shipment.shipment_id}`;
+      const frontendBaseUrl =
+        process.env.FRONTEND_BASE_URL ||
+        "https://intelli-ship-project-frontend.vercel.app";
+      const trackingUrl = `${frontendBaseUrl.replace(/\/$/, "")}/track/${shipment.shipment_id}`;
 
       await sendShipmentCreatedEmail({
         email: shipment.customer_email,
         name: shipment.customer_name,
         shipmentId: shipment.shipment_id,
+        productName: shipment.product_name,
         trackingUrl,
       });
     } catch (err) {
