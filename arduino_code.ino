@@ -17,6 +17,8 @@
 // ================== WIFI ==================
 const char* ssid = "Mahavir22";
 const char* password = "mahavir2006";
+const unsigned long WIFI_RETRY_DELAY_MS = 1000;
+const unsigned long WIFI_CONNECT_WINDOW_MS = 5000;
 
 // ================== SERVER ==================
 const char* serverURL = "https://intelliship-project.onrender.com/api/events";
@@ -55,21 +57,48 @@ void setup() {
 
 // ================== WIFI ==================
 void connectWiFi() {
-  WiFi.begin(ssid, password);
-  Serial.print("Connecting");
-
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
+  if (WiFi.status() == WL_CONNECTED) {
+    return;
   }
 
-  Serial.println("\nConnected!");
+  WiFi.mode(WIFI_STA);
+  WiFi.setAutoReconnect(true);
+  WiFi.persistent(true);
+
+  Serial.println("Connecting to WiFi...");
+
+  int attempt = 0;
+  while (WiFi.status() != WL_CONNECTED) {
+    attempt++;
+    Serial.print("WiFi connect attempt #");
+    Serial.println(attempt);
+
+    WiFi.disconnect();
+    delay(100);
+    WiFi.begin(ssid, password);
+
+    unsigned long connectStart = millis();
+    while (WiFi.status() != WL_CONNECTED && millis() - connectStart < WIFI_CONNECT_WINDOW_MS) {
+      delay(500);
+      Serial.print(".");
+    }
+
+    if (WiFi.status() != WL_CONNECTED) {
+      Serial.println("\nReconnecting...");
+      delay(WIFI_RETRY_DELAY_MS);
+    }
+  }
+
+  Serial.println("\nConnected to WiFi");
+  Serial.print("IP address: ");
+  Serial.println(WiFi.localIP());
 }
 
 // ================== LOOP ==================
 void loop() {
 
   if (WiFi.status() != WL_CONNECTED) {
+    Serial.println("⚠ WiFi lost. Reconnecting...");
     connectWiFi();
   }
 
